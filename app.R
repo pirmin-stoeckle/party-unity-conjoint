@@ -1,6 +1,8 @@
 library(shiny)
 library(shinyjs)
 library(shinythemes)
+library(data.table)
+library(ggplot2)
 
 # clear directory
 rm(list=ls())
