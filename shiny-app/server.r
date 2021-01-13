@@ -8,7 +8,7 @@ shinyServer(function(input, output) {
   })
   
   output$plot <- renderPlot({
-    load(file = "./data/linpreds.RData")
+    load(file = "linpreds.RData")
     cases <- rbind(linpreds[role == input$role_1 &
                         conference == input$conference_1 &
                         parliament == input$parliament_1 &
@@ -55,7 +55,7 @@ shinyServer(function(input, output) {
   })
   
   output$table <- renderTable({
-    load(file = "./data/linpreds.RData")
+    load(file = "linpreds.RData")
     cases <- rbind(linpreds[role == input$role_1 &
                             conference == input$conference_1 &
                             parliament == input$parliament_1 &
