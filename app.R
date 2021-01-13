@@ -2,8 +2,12 @@ library(shiny)
 library(shinyjs)
 library(shinythemes)
 
-# all we need as input is linpreds
-load(file = "pirmin-stoeckle/party-unity-conjoint/data/linpreds.RData")
+# clear directory
+rm(list=ls())
+
+# load data
+# all we need as input is linpreds.RData
+load(file=paste0(getwd(),"/data/linpreds.RData"))
 
 ui <- fluidPage(
   useShinyjs(),
