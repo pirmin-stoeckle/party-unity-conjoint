@@ -3,7 +3,7 @@ library(shinyjs)
 library(shinythemes)
 
 # all we need as input is linpreds
-load(file = "pirmin.stoeckle/party-unity-conjoint/data/linpreds.RData")
+load(file = "pirmin-stoeckle/party-unity-conjoint/data/linpreds.RData")
 
 ui <- fluidPage(
   useShinyjs(),
