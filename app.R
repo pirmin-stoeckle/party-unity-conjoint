@@ -3,6 +3,7 @@ library(shinyjs)
 library(shinythemes)
 
 # all we need as input is linpreds
+load(file = ".data/linpreds.RData")
 
 ui <- fluidPage(
   useShinyjs(),
