@@ -11,6 +11,9 @@ rm(list=ls())
 # all we need as input is linpreds.RData
 load(file=paste0(getwd(),"/data/linpreds.RData"))
 
+# remove respondent_educ
+linpreds <- unique(linpreds[,-"respondent_educ"])
+
 ui <- fluidPage(
   useShinyjs(),
   
@@ -41,8 +44,8 @@ ui <- fluidPage(
             selectInput('dist_1', 'Ideological distance', choices = levels(linpreds$dist)),
             h4("Party's Characteristic"), 
             selectInput('role_1', 'Party role', choices = levels(linpreds$role)),
-            h4("Respondent's Characteristic"), 
-            selectInput('respondent_educ_1', "Education", choices = levels(linpreds$respondent_educ)),
+            #h4("Respondent's Characteristic"), 
+            #selectInput('respondent_educ_1', "Education", choices = levels(linpreds$respondent_educ)),
             actionButton("reset_1", "Reset")
             )
      ),
@@ -62,8 +65,8 @@ ui <- fluidPage(
             selectInput('dist_2', 'Ideological distance', choices = levels(linpreds$dist)),
             h4("Party's Characteristic"), 
             selectInput('role_2', 'Party role', choices = levels(linpreds$role)),
-            h4("Respondent's Characteristic"), 
-            selectInput('respondent_educ_2', "Education", choices = levels(linpreds$respondent_educ)),
+            #h4("Respondent's Characteristic"), 
+            #selectInput('respondent_educ_2', "Education", choices = levels(linpreds$respondent_educ)),
             actionButton("reset_2", "Reset")
             )
      ),
@@ -97,7 +100,7 @@ server <- function(input, output) {
                         gender == input$gender_1 &
                         age == input$age_1 &
                         job == input$job_1 &
-                        respondent_educ == input$respondent_educ_1 &
+                        #respondent_educ == input$respondent_educ &
                         dist == input$dist_1],
                    linpreds[role == input$role_2 &
                               conference == input$conference_2 &
@@ -107,7 +110,7 @@ server <- function(input, output) {
                               gender == input$gender_2 &
                               age == input$age_2 &
                               job == input$job_2 &
-                              respondent_educ == input$respondent_educ_2 &
+                              #respondent_educ == input$respondent_educ &
                               dist == input$dist_2]
     )
     
@@ -143,7 +146,7 @@ server <- function(input, output) {
                             gender == input$gender_1 &
                             age == input$age_1 &
                             job == input$job_1 &
-                            respondent_educ == input$respondent_educ_1 &
+                            #respondent_educ == input$respondent_educ &
                             dist == input$dist_1],
                  linpreds[role == input$role_2 &
                             conference == input$conference_2 &
@@ -153,7 +156,7 @@ server <- function(input, output) {
                             gender == input$gender_2 &
                             age == input$age_2 &
                             job == input$job_2 &
-                            respondent_educ == input$respondent_educ_2 &
+                            #respondent_educ == input$respondent_educ &
                             dist == input$dist_2]
     )
   
