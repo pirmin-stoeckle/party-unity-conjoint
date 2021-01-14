@@ -2,7 +2,7 @@
 title: "Draft Report - Assessing the relative influence of party unity on vote choice: Evidence from a conjoint experiment "
 author: "Sebastian Juhl, Roni Lehrer, Pirmin Stöckle"
 date: "1/14/2021"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
