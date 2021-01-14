@@ -7,12 +7,13 @@ output: github_document
 
 Do voters react to internal party conflict?
 
-```{r}
+```{r, echo = F}
+library(data.table)
 load(file=paste0(getwd(),"/data/linpreds.RData"))
 
 linpreds[,
          .("mean_lin_pred" = mean(mean)),
-         by = .(dist)]
+         by = conference]
 
 ```
 
