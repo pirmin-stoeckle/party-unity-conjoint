@@ -28,49 +28,49 @@ ui <- fluidPage(
      column(3, h2("Candidate 1"),
             div(
             id = "scenario_1",
-            h4("Candidate characteristics"),
+            h4("Candidate Characteristics:"),
             selectInput('gender_1', 'Gender', choices = levels(linpreds$gender)),
             selectInput('age_1', 'Age', choices = levels(linpreds$age)),
-            selectInput('job_1', 'Former occupation', choices = levels(linpreds$job)),
-            h4("Intra-party behavior"),    
+            selectInput('job_1', 'Occupation', choices = levels(linpreds$job)),
+            h4("Intra-Party Behavior"),    
             selectInput('conference_1', 'Behavior at party conference', choices = levels(linpreds$conference)),
             selectInput('parliament_1', 'Voting behavior in parliament', choices = levels(linpreds$parliament)),
             selectInput('critique_1', 'Intra-party critique', choices = levels(linpreds$critique)),
             selectInput('reform_1', 'Clarity of reform proposals', choices = levels(linpreds$reform)),
-            h4("Party position"), 
+            h4("Party Position"), 
             selectInput('dist_1', 'Ideological distance', choices = levels(linpreds$dist)),
-            h4("Party's characteristic"), 
+            h4("Party's Characteristic"), 
             selectInput('role_1', 'Party role', choices = levels(linpreds$role)),
-            h4("Respondent's characteristic"), 
-            selectInput('respondent_educ_1', "Respondent's education", choices = levels(linpreds$respondent_educ)),
+            h4("Respondent's Characteristic"), 
+            selectInput('respondent_educ_1', "Education", choices = levels(linpreds$respondent_educ)),
             actionButton("reset_1", "Reset")
             )
      ),
      column(3, h2("Candidate 2"),
             div(
             id = "scenario_2",
-            h4("Candidate characteristics"),
+            h4("Candidate Characteristics"),
             selectInput('gender_2', 'Gender', choices = levels(linpreds$gender)),
             selectInput('age_2', 'Age', choices = levels(linpreds$age)),
-            selectInput('job_2', 'Former occupation', choices = levels(linpreds$job)),
-            h4("Intra-party behavior"),    
+            selectInput('job_2', 'Occupation', choices = levels(linpreds$job)),
+            h4("Intra-Party Behavior"),    
             selectInput('conference_2', 'Behavior at party conference', choices = levels(linpreds$conference)),
             selectInput('parliament_2', 'Voting behavior in parliament', choices = levels(linpreds$parliament)),
             selectInput('critique_2', 'Intra-party critique', choices = levels(linpreds$critique)),
             selectInput('reform_2', 'Clarity of reform proposals', choices = levels(linpreds$reform)),
-            h4("Party position"), 
+            h4("Party Position"), 
             selectInput('dist_2', 'Ideological distance', choices = levels(linpreds$dist)),
-            h4("Party's characteristic"), 
+            h4("Party's Characteristic"), 
             selectInput('role_2', 'Party role', choices = levels(linpreds$role)),
-            h4("Respondent's characteristic"), 
-            selectInput('respondent_educ_2', "Respondent's education", choices = levels(linpreds$respondent_educ)),
+            h4("Respondent's Characteristic"), 
+            selectInput('respondent_educ_2', "Education", choices = levels(linpreds$respondent_educ)),
             actionButton("reset_2", "Reset")
             )
      ),
-     column(5, h2("Predicted vote probabilities"),
+     column(5, h2("Predicted Vote Probabilities"),
             plotOutput("plot"),
             tableOutput("table")
-     )
+     ,offset=1)
    ),
  )
   )
@@ -82,6 +82,7 @@ server <- function(input, output) {
   observeEvent(input$reset_1, {
     reset("scenario_1")
   })
+  
   observeEvent(input$reset_2, {
     reset("scenario_2")
   })
@@ -168,7 +169,7 @@ server <- function(input, output) {
    cases$lower <- NULL
    cases$upper <- NULL
    
-    cases[, .(Candidate = factor(c(1,2)), Prob = prob*100, CI1 = CI1*100, CI2 = CI2*100)]
+    cases[, .(Candidate = factor(c(1,2)), Prob = prob*100, LowerCI = CI1*100, UpperCI = CI2*100)]
    })
   
 }
