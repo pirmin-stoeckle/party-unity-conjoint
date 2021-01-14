@@ -7,7 +7,7 @@ amceplot <- ggplot(pdata, aes(x = mean, y = fct_rev(fct_inorder(names)))) + #to 
   theme_bw()
 
 #save plot to pdf
-pdf("./manuscript/figures/amceplot.pdf")
+pdf(file=paste0(getwd(),"/figures/amceplot.pdf"))
 amceplot
 dev.off()
 
