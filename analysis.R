@@ -32,7 +32,7 @@ dat$respondent_educ <- factor(dat$respondent_educ, levels=1:2,
                   labels=c("no higher educ", "higher educ"))
 dat$dist <- factor(dat$dist, levels=0:4)
 
-#set baseline scenario correponding to the highest preference
+#set baseline scenario corresponding to the highest preference
        #personal characteristics
        dat$gender <- relevel(dat$gender, ref="female")
        dat$age <- relevel(dat$age, ref="38y")
