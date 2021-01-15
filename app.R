@@ -14,6 +14,13 @@ load(file=paste0(getwd(),"/data/linpreds.RData"))
 # remove respondent_educ
 linpreds <- unique(linpreds[,-"respondent_educ"])
 
+# function to convert linear predictor to predicted probabilities
+compute_probs_one_vs_second <- function(x) {
+  prob.first <- exp(x[1])/(sum(exp(x)))
+  return(c(prob.first, 1-prob.first))
+}
+
+# user interface
 ui <- fluidPage(
   useShinyjs(),
   
@@ -79,7 +86,7 @@ ui <- fluidPage(
   )
 )
 
-
+# server function
 server <- function(input, output) {
   
   observeEvent(input$reset_1, {
@@ -114,17 +121,9 @@ server <- function(input, output) {
                               dist == input$dist_2]
     )
     
-    compute_probs_one_vs_second <- function(x) {
-      prob.first <- exp(x[1])/(sum(exp(x)))
-      return(c(prob.first, 1-prob.first))
-    }
-    
-    cases <- cases[,prob:=compute_probs_one_vs_second(mean)]
-    cases <- cases[,CI1:=compute_probs_one_vs_second(lower)]
-    cases <- cases[,CI2:=compute_probs_one_vs_second(upper)]
-    cases$mean <- NULL
-    cases$lower <- NULL
-    cases$upper <- NULL
+    cases[,prob:=compute_probs_one_vs_second(mean)]
+    cases[,CI1:=compute_probs_one_vs_second(lower)]
+    cases[,CI2:=compute_probs_one_vs_second(upper)]
     
     # plot
     ggplot(cases, aes(x = factor(c(1, 2)), y = prob)) +
@@ -160,22 +159,15 @@ server <- function(input, output) {
                             dist == input$dist_2]
     )
   
-    compute_probs_one_vs_second <- function(x) {
-      prob.first <- exp(x[1])/(sum(exp(x)))
-      return(c(prob.first, 1-prob.first))
-    }
-  
-   cases <- cases[,prob:=compute_probs_one_vs_second(mean)]
-   cases <- cases[,CI1:=compute_probs_one_vs_second(lower)]
-   cases <- cases[,CI2:=compute_probs_one_vs_second(upper)]
-   cases$mean <- NULL
-   cases$lower <- NULL
-   cases$upper <- NULL
+   cases[,prob:=compute_probs_one_vs_second(mean)]
+   cases[,CI1:=compute_probs_one_vs_second(lower)]
+   cases[,CI2:=compute_probs_one_vs_second(upper)]
    
-    cases[, .(Candidate = factor(c(1,2)), Prob = prob*100, LowerCI = CI1*100, UpperCI = CI2*100)]
+   cases[, .(Candidate = factor(c(1,2)), Prob = prob*100, LowerCI = CI1*100, UpperCI = CI2*100)]
    })
   
 }
 
 
 shinyApp(ui, server)
+
