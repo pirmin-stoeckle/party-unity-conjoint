@@ -90,8 +90,8 @@ server <- function(input, output) {
     reset("scenario_2")
   })
   
-  output$plot <- renderPlot({
-    
+  # define output plot
+  output$plot <- renderPlot({  
     cases <- rbind(linpreds[role == input$role_1 &
                         conference == input$conference_1 &
                         parliament == input$parliament_1 &
@@ -100,7 +100,8 @@ server <- function(input, output) {
                         gender == input$gender_1 &
                         age == input$age_1 &
                         job == input$job_1 &
-                        dist == input$dist_1],
+                        dist == input$dist_1
+                      ,c("mean", "upper", "lower")],
                    linpreds[role == input$role_2 &
                               conference == input$conference_2 &
                               parliament == input$parliament_2 &
@@ -109,15 +110,15 @@ server <- function(input, output) {
                               gender == input$gender_2 &
                               age == input$age_2 &
                               job == input$job_2 &
-                              dist == input$dist_2]
+                              dist == input$dist_2
+                            ,c("mean", "upper", "lower")]
     )
     
-    cases[,prob:=compute_probs_one_vs_second(mean)]
-    cases[,CI1:=compute_probs_one_vs_second(lower)]
-    cases[,CI2:=compute_probs_one_vs_second(upper)]
+    predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second))
+    colnames(predprob) <- c("prob","CI1","CI2")
     
     # plot
-    ggplot(cases, aes(x = factor(c(1, 2)), y = prob)) +
+    ggplot(predprob, aes(x = factor(c(1, 2)), y = prob)) +
       geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
       ylim(c(0, 1)) +
       ylab("") +
@@ -127,6 +128,7 @@ server <- function(input, output) {
     
   })
   
+  # define output table
   output$table <- renderTable({
     cases <- rbind(linpreds[role == input$role_1 &
                             conference == input$conference_1 &
@@ -136,7 +138,8 @@ server <- function(input, output) {
                             gender == input$gender_1 &
                             age == input$age_1 &
                             job == input$job_1 &
-                            dist == input$dist_1],
+                            dist == input$dist_1
+                          ,c("mean", "upper", "lower")],
                  linpreds[role == input$role_2 &
                             conference == input$conference_2 &
                             parliament == input$parliament_2 &
@@ -145,14 +148,15 @@ server <- function(input, output) {
                             gender == input$gender_2 &
                             age == input$age_2 &
                             job == input$job_2 &
-                            dist == input$dist_2]
+                            dist == input$dist_2
+                          ,c("mean", "upper", "lower")]
     )
-  
-   cases[,prob:=compute_probs_one_vs_second(mean)]
-   cases[,CI1:=compute_probs_one_vs_second(lower)]
-   cases[,CI2:=compute_probs_one_vs_second(upper)]
    
-   cases[, .(Candidate = factor(c(1,2)), Prob = prob*100, LowerCI = CI1*100, UpperCI = CI2*100)]
+    predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second)*100)
+    colnames(predprob) <- c("prob","CI1","CI2")
+      
+    data.frame(Candidate=factor(c(1,2)), Prob=predprob$prob
+               ,lowerCI=predprob$CI1, upperCI=predprob$CI2)
    })
   
 }
