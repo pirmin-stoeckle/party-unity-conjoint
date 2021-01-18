@@ -72,7 +72,8 @@ ui <- fluidPage(
      ),
      column(5, h2("Predicted Vote Probabilities"),
             plotOutput("plot"),
-            tableOutput("table")
+            tableOutput("table"),
+            plotOutput("plot2")
      ,offset=1)
    ),
  )
@@ -168,6 +169,54 @@ server <- function(input, output) {
     }
    })
   
+  # define second output plot
+  output$plot2 <- renderPlot({  
+    cases <- rbind(linpreds[role == input$role_1 &
+                              conference == input$conference_1 &
+                              parliament == input$parliament_1 &
+                              critique == input$critique_1 &
+                              reform == input$reform_1 &
+                              gender == input$gender_1 &
+                              age == input$age_1 &
+                              job == input$job_1 &
+                              dist == input$dist_1
+                            ,c("mean", "upper", "lower")],
+                   linpreds[role == input$role_2 &
+                              conference == input$conference_2 &
+                              parliament == input$parliament_2 &
+                              critique == input$critique_2 &
+                              reform == input$reform_2 &
+                              gender == input$gender_2 &
+                              age == input$age_2 &
+                              job == input$job_2 &
+                              dist == input$dist_2
+                            ,c("mean", "upper", "lower")]
+    )
+    
+    if(nrow(cases)==2){
+      predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second))
+      colnames(predprob) <- c("prob","CI1","CI2")
+      
+      # plot
+      par(mar=c(0,0,0,0))
+      plot(0,xlim=c(0,1),ylim=c(-9,10),type="n",axes=F,ann=F)
+      polygon(x=c(-.002,.5,.5,-.002),y=c(0,0,1,1),col=rgb(0,0,1,alpha=.3),border=F)
+      polygon(x=c(.5,1.002,1.002,.5),y=c(0,0,1,1),col=rgb(0,1,0,alpha=.3),border=F)
+      text(x=.1,y=2.5,"Choice 1",cex=.9,font=2)
+      text(x=.9,y=2.5,"Choice 2",cex=.9,font=2)
+      for(i in seq(0,1,by=.2)){
+        lines(x=c(i,i),y=c(1,0),lwd=.5)
+      }
+      lines(x=c(predprob$prob[2],predprob$prob[2]),y=c(1.5,-.5),lwd=2)
+      polygon(x=c(predprob$CI1[2],predprob$CI2[2]
+                  ,predprob$CI2[2],predprob$CI1[2])
+              ,y=c(-.2,-.2,1.2,1.2),col=rgb(0,0,0,alpha=.3),border=F)
+    } else {
+      plot(0,xlim=c(0,1),ylim=c(0,1),type="n",axes=F,ann=F)
+      text(x=.5,y=.5, "WARNING:\n Invalid combination\n of attributes.")
+    }
+    
+  })
 }
 
 
