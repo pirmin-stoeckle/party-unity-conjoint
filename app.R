@@ -114,17 +114,22 @@ server <- function(input, output) {
                             ,c("mean", "upper", "lower")]
     )
     
-    predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second))
-    colnames(predprob) <- c("prob","CI1","CI2")
-    
-    # plot
-    ggplot(predprob, aes(x = factor(c(1, 2)), y = prob)) +
-      geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
-      ylim(c(0, 1)) +
-      ylab("") +
-      xlab("Candidate") +
-      geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
-      theme_bw()
+    if(nrow(cases)==2){
+      predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second))
+      colnames(predprob) <- c("prob","CI1","CI2")
+      
+      # plot
+      ggplot(predprob, aes(x = factor(c(1, 2)), y = prob)) +
+        geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
+        ylim(c(0, 1)) +
+        ylab("") +
+        xlab("Candidate") +
+        geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
+        theme_bw()
+    } else {
+      plot(0,xlim=c(0,1),ylim=c(0,1),type="n",axes=F,ann=F)
+      text(x=.5,y=.5, "WARNING:\n Invalid combination\n of attributes.")
+    }
     
   })
   
@@ -152,11 +157,15 @@ server <- function(input, output) {
                           ,c("mean", "upper", "lower")]
     )
    
-    predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second)*100)
-    colnames(predprob) <- c("prob","CI1","CI2")
+    if(nrow(cases)==2){
+      predprob <- as.data.frame(apply(cases,2,compute_probs_one_vs_second)*100)
+      colnames(predprob) <- c("prob","CI1","CI2")
       
-    data.frame(Candidate=factor(c(1,2)), Prob=predprob$prob
-               ,lowerCI=predprob$CI1, upperCI=predprob$CI2)
+      data.frame(Candidate=factor(c(1,2)), Prob=predprob$prob
+                 ,lowerCI=predprob$CI1, upperCI=predprob$CI2)
+    } else {
+      data.frame(WARNING="Invalid combination of attributes.")
+    }
    })
   
 }
