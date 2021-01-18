@@ -13,6 +13,6 @@ shiny::runGitHub("party-unity-conjoint", "pirmin-stoeckle", ref = "main")
 ``` 
 
 ## Authors
-- [`Sebastian Juhl`](http://wwwsebastianjuhl.com) (SFB 884; University of Mannheim)
-- [`Roni Lehrer`](http://http://www.ronilehrer.com) (MZES; University of Mannheim)
+- [`Sebastian Juhl`](http://www.sebastianjuhl.com) (SFB 884; University of Mannheim)
+- [`Roni Lehrer`](http://www.ronilehrer.com) (MZES; University of Mannheim)
 - Pirmin Stöckle (SFB 884; University of Mannheim)
