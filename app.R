@@ -21,7 +21,7 @@ compute_probs_one_vs_second <- function(x) {
 ui <- fluidPage(
   useShinyjs(),
   
-  titlePanel("Party Unity Vote Experiment - Simulation Tool"),
+  titlePanel("Party Vote Choice Experiment - Simulation Tool"),
   
   theme = shinytheme("flatly"),
   
