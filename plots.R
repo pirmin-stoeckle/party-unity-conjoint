@@ -21,7 +21,6 @@ strategy1 <- scenarios[role == "government party (not PM party)" &
                          gender == "female" &
                          age == "38y" &
                          job == "employee" &
-                         respondent_educ == "no higher educ" &
                          dist == "0",
                        .(lower, prob, upper)]
 
@@ -33,7 +32,6 @@ strategy2 <- scenarios[role == "government party (not PM party)" &
                          gender == "female" &
                          age == "38y" &
                          job == "employee" &
-                         respondent_educ == "no higher educ" &
                          dist == "1",
                        .(lower, prob, upper)]
 
@@ -45,7 +43,6 @@ strategy3 <- scenarios[role == "government party (not PM party)" &
                          gender == "female" &
                          age == "38y" &
                          job == "employee" &
-                         respondent_educ == "no higher educ" &
                          dist == "2",
                        .(lower, prob, upper)]
 
@@ -57,7 +54,6 @@ strategy4 <- scenarios[role == "government party (not PM party)" &
                          gender == "female" &
                          age == "38y" &
                          job == "employee" &
-                         respondent_educ == "no higher educ" &
                          dist == "3",
                        .(lower, prob, upper)]
 
@@ -69,7 +65,6 @@ strategy5 <- scenarios[role == "government party (not PM party)" &
                          gender == "female" &
                          age == "38y" &
                          job == "employee" &
-                         respondent_educ == "no higher educ" &
                          dist == "4",
                        .(lower, prob, upper)]
 
