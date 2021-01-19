@@ -49,7 +49,7 @@ pdata_tidy <- pdata %>%
 pdata_tidy %>% select(names, nice_names)
 
 amceplot <- ggplot(pdata_tidy, aes(x = mean, y = fct_rev(fct_inorder(nice_names)))) + #to keep the factor levels as defined in pdata
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.15)+
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5)+
   geom_vline(xintercept = 0, linetype = 3) +
   xlab("AMCE") +
   ylab("") +
@@ -77,7 +77,7 @@ dist_by_conference <- scenarios[role == "government party (not PM party)" &
 
 #plot
 distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.1) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5) +
   facet_wrap(vars(conference)) +
   ggtitle("Behavior at party conference") +
   ylab("Ideological distance") +
@@ -86,7 +86,7 @@ distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist)) +
   theme_bw()
 
 #save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_conference.pdf"), width = 12, height = 5)
+pdf(file=paste0(getwd(),"/figures/distplot_conference.pdf"), width = 7, height = 4)
 distplot_conference
 dev.off()
 
@@ -104,7 +104,7 @@ dist_by_parliament <- scenarios[role == "government party (not PM party)" &
 
 #plot
 distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.1) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5) +
   facet_wrap(vars(parliament)) +
   ggtitle("Voting behavior in parliament") +
   ylab("Ideological distance") +
@@ -113,7 +113,7 @@ distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
   theme_bw()
 
 #save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 8, height = 5)
+pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 7, height = 4)
 distplot_parliament
 dev.off()
 
@@ -131,7 +131,7 @@ dist_by_reform <- scenarios[role == "government party (not PM party)" &
 
 #plot
 distplot_reform <- ggplot(dist_by_reform, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.1) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5) +
   facet_wrap(vars(reform)) +
   ggtitle("Clarity of reform proposals") +
   ylab("Ideological distance") +
@@ -140,6 +140,6 @@ distplot_reform <- ggplot(dist_by_reform, aes(x = prob, y = dist)) +
   theme_bw()
 
 #save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_reform.pdf"), width = 8, height = 5)
+pdf(file=paste0(getwd(),"/figures/distplot_reform.pdf"), width = 7, height = 4)
 distplot_reform
 dev.off()
