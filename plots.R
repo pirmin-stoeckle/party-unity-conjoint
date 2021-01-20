@@ -1,7 +1,13 @@
 library(tidyverse)
 library(data.table)
 
-#pdata from analysis.R can be used for plotting
+# cleaning directory
+rm(list=ls())
+
+# loading analysis script
+source("analysis.R")
+
+#pdata from analysis.R can be used for plotting AMCE's
 
 #insert nice names for graph and extra rows for baseline categories and labels
 pdata_tidy <- pdata %>%
@@ -142,4 +148,31 @@ distplot_reform <- ggplot(dist_by_reform, aes(x = prob, y = dist)) +
 #save plot to pdf
 pdf(file=paste0(getwd(),"/figures/distplot_reform.pdf"), width = 7, height = 4)
 distplot_reform
+dev.off()
+
+# Effect of ideological distance by internal critique
+dist_by_critique <- scenarios[role == "government party (not PM party)" &
+                              conference == "united" &
+                              parliament == "united" &
+                              critique %in% c("grass-root members", "former party leader", "party faction", "none") &
+                              reform == "high" &
+                              gender == "female" &
+                              age == "38y" &
+                              job == "employee" &
+                              dist %in% c(0:4),]
+
+
+#plot
+distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5) +
+  facet_grid(vars(), vars(critique)) +
+  ggtitle("Intra-party critique") +
+  ylab("Ideological distance") +
+  xlab("Predicted vote share versus baseline") +
+  coord_flip() +
+  theme_bw()
+
+#save plot to pdf
+pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 4)
+distplot_critique
 dev.off()
