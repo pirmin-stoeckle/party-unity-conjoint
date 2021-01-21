@@ -33,7 +33,7 @@ dat$job <- factor(dat$job, levels=1:6,
                            "entrepreneur", "employee (retired)"))
 dat$dist <- factor(dat$dist, levels=0:4)
 
-#set baseline scenario corresponding to the highest preference
+#set baseline scenario (corresponding to the highest preference, as identified in the model)
        # personal characteristics
        dat$gender <- relevel(dat$gender, ref="female")
        dat$age <- relevel(dat$age, ref="38y")
@@ -49,6 +49,24 @@ dat$dist <- factor(dat$dist, levels=0:4)
        # party position
        dat$dist <- relevel(dat$dist, ref="0")
 
+#choice data descriptives
+head(dat)
+summary(dat)
+
+#data check: do party ratings correspond to chosen parties?
+dat %>% 
+    filter(!is.na(rating)) %>%
+    pivot_wider(
+        id_cols = id_screen,
+        names_from = chosen,
+        names_prefix = "rating_",
+        values_from = rating,
+        values_fn = mean
+    ) %>% 
+    mutate(correct_order = (rating_1 >= rating_0)) %>% 
+    count(correct_order) %>% 
+    mutate(freq = n/sum(n))
+       
 # compute conditional logit model
 # strata distinguished the different choice situations (each respondent-screen combination)
 # cluster allows for clustered SEs by respondent
