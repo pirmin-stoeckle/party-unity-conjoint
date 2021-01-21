@@ -49,11 +49,11 @@ dat$dist <- factor(dat$dist, levels=0:4)
        # party position
        dat$dist <- relevel(dat$dist, ref="0")
 
-#choice data descriptives
+# choice data descriptives
 head(dat)
 summary(dat)
 
-#data check: do party ratings correspond to chosen parties?
+# data check: do party ratings correspond to chosen parties?
 dat %>% 
     filter(!is.na(rating)) %>%
     pivot_wider(
@@ -66,7 +66,12 @@ dat %>%
     mutate(correct_order = (rating_1 >= rating_0)) %>% 
     count(correct_order) %>% 
     mutate(freq = n/sum(n))
-       
+
+# what is the sample size after removal of missings?
+dat[complete.cases(chosen, dist), #other variables relevant for model are non-missing by design
+    .(n_respondents = length(unique(id_g)),
+      n_observations = length(unique(id_screen)))]
+
 # compute conditional logit model
 # strata distinguished the different choice situations (each respondent-screen combination)
 # cluster allows for clustered SEs by respondent
