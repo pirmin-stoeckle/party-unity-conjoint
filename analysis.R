@@ -109,7 +109,7 @@ pdata <- compute_pdata(model = model)
 # pdata can be used for plotting
 
 # alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
-model_cjoint <- amce(chosen~
+model_cjoint <- cjoint::amce(chosen~
                        gender
                      +age
                      +job
