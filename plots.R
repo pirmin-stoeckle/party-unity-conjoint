@@ -57,9 +57,8 @@ pdata_tidy %>% select(names, nice_names)
 amceplot <- ggplot(pdata_tidy, aes(x = mean, y = fct_rev(fct_inorder(nice_names)))) + #to keep the factor levels as defined in pdata
   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.5)+
   geom_vline(xintercept = 0, linetype = 3) +
-  xlab("AMCE") +
-  ylab("") +
-  theme_bw()
+  xlab("Change: Pr(Vote for the respective candidate)") +
+  ylab("")
 
 #save plot to pdf
 pdf(file=paste0(getwd(),"/figures/amceplot.pdf"))
