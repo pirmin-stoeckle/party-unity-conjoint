@@ -1,4 +1,5 @@
 library(tidyverse)
+library(gridExtra)
 library(data.table)
 
 # cleaning directory
@@ -177,4 +178,83 @@ distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
 #save plot to pdf
 pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 4)
 distplot_critique
+dev.off()
+
+###############################################
+# simulating specific competitions
+###############################################
+
+# function to convert linear predictors to predicted probabilities
+compute_probs_one_vs_second <- function(x) {
+  prob.first <- exp(x[1])/(sum(exp(x)))
+  return(c(prob.first, 1-prob.first))
+}
+
+cases1_2a <- rbind(linpreds[role == "government party (not PM party)" &
+                          conference == "divided" &
+                          parliament == "divided" &
+                          critique == "former party leader" &
+                          reform == "low" &
+                          gender == "male" &
+                          age == "56y" &
+                          job == "lawyer" &
+                          dist == 0
+                        ,c("mean", "upper", "lower")],
+               linpreds[role == "opposition party" &
+                          conference == "divided" &
+                          parliament == "divided" &
+                          critique == "former party leader" &
+                          reform == "low" &
+                          gender == "female" &
+                          age == "38y" &
+                          job == "employee" &
+                          dist == 2
+                        ,c("mean", "upper", "lower")]
+)
+
+cases1_2b <- rbind(linpreds[role == "government party (not PM party)" &
+                              conference == "divided" &
+                              parliament == "divided" &
+                              critique == "former party leader" &
+                              reform == "low" &
+                              gender == "male" &
+                              age == "56y" &
+                              job == "lawyer" &
+                              dist == 0
+                            ,c("mean", "upper", "lower")],
+                   linpreds[role == "opposition party" &
+                              conference == "united" &
+                              parliament == "united" &
+                              critique == "grass-root members" &
+                              reform == "high" &
+                              gender == "female" &
+                              age == "38y" &
+                              job == "employee" &
+                              dist == 2
+                            ,c("mean", "upper", "lower")]
+)
+
+predprob1_2a <- as.data.frame(apply(cases1_2a,2,compute_probs_one_vs_second))
+colnames(predprob1_2a) <- c("prob","CI1","CI2")
+
+predprob1_2b <- as.data.frame(apply(cases1_2b,2,compute_probs_one_vs_second))
+colnames(predprob1_2b) <- c("prob","CI1","CI2")
+
+predprob <- rbind(predprob1_2a[1,], predprob1_2b[1,])
+
+
+# plot
+competitionplot <- ggplot(predprob, aes(x = fct_rev(fct_inorder(c("Party 1 vs Party 2a",
+                                  "Party 1 vs Party 2b"))), y = prob)) +
+  geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
+  ylim(c(0, 1)) +
+  ylab("Expected Probability to Vote for Party 1") +
+  xlab("") +
+  geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
+  coord_flip() +
+  theme_bw()
+
+#save plot to pdf
+pdf(file=paste0(getwd(),"/figures/competitionplot.pdf"), width = 7, height = 4)
+competitionplot
 dev.off()
