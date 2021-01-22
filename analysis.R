@@ -119,7 +119,7 @@ model_cjoint <- amce(chosen~
                      +conference
                      +reform
                      +dist, 
-                     data = dat, design = "uniform",
+                     data = dat[complete.cases(dist, chosen),], design = "uniform",
                      respondent.varying = NULL, subset = NULL,
                      respondent.id = "id_g", cluster = TRUE, na.ignore=T,
                      weights = NULL, baselines = NULL)
