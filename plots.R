@@ -66,6 +66,9 @@ pdf(file=paste0(getwd(),"/figures/amceplot.pdf"))
 amceplot
 dev.off()
 
+# alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
+plot.amce(model_cjoint)
+# -> looks pretty similar
 
 # scenarios from analysis.R can be used to get probabilities for scenarios compared to baseline
 
