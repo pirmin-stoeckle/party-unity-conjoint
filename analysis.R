@@ -3,7 +3,9 @@ library(ggplot2)
 library(survival)
 library(haven)
 library(MASS)
+library(cjoint) # for # alternative AMCE estimation
 library(forcats) # to re-order factors (within ggplot)
+library(tidyverse)
 
 # cleaning directory
 rm(list=ls())
@@ -21,7 +23,7 @@ dat$conference <- factor(dat$conference, levels=1:3,
 dat$parliament <- factor(dat$parliament, levels=2:3,
                     labels=c("united", "divided"))
 dat$critique <- factor(dat$critique, levels=1:4,
-                    labels=c("grass-root members", "former party leader", "party faction", "none"))
+                    labels=c("rank-and-file members", "former party leader", "party faction", "none"))
 dat$reform <- factor(dat$reform, levels=1:2,
                      labels=c("high", "low"))
 dat$gender <- factor(dat$gender, levels=1:2,
@@ -41,7 +43,7 @@ dat$dist <- factor(dat$dist, levels=0:4)
        # party status
        dat$role <- relevel(dat$role, ref="government party (not PM party)")
        # party unity
-       dat$critique <- relevel(dat$critique, ref="grass-root members")
+       dat$critique <- relevel(dat$critique, ref="rank-and-file members")
        dat$parliament <- relevel(dat$parliament, ref="united")
        dat$conference <- relevel(dat$conference, ref="united")
        # reform clarity
@@ -134,7 +136,7 @@ compute_scenarios <- function(model) {
     scenarios=expand.grid(role=c("opposition party", "PM party", "government party (not PM party)"),
                           conference= c("united", "neither united nor divided", "divided"),
                           parliament=c("united", "divided"),
-                          critique= c("grass-root members", "former party leader", "party faction", "none"),
+                          critique= c("rank-and-file members", "former party leader", "party faction", "none"),
                           reform=c("high", "low"),
                           gender=c("male", "female"),
                           age=c("38y", "56y", "74y"),
@@ -186,7 +188,7 @@ compute_scenarios_linpred <- function(model){
     scenarios=expand.grid(role=c("opposition party", "PM party", "government party (not PM party)"),
                           conference= c("united", "neither united nor divided", "divided"),
                           parliament=c("united", "divided"),
-                          critique= c("grass-root members", "former party leader", "party faction", "none"),
+                          critique= c("rank-and-file members", "former party leader", "party faction", "none"),
                           reform=c("high", "low"),
                           gender=c("male", "female"),
                           age=c("38y", "56y", "74y"),
