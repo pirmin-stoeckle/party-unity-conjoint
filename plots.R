@@ -1,5 +1,6 @@
 library(tidyverse)
 library(data.table)
+library(dplyr)
 
 # cleaning directory
 rm(list=ls())
@@ -41,7 +42,7 @@ pdata_tidy <- pdata %>%
   add_row(nice_names = "PARTY ROLE:", .before = 15) %>% 
   add_row(nice_names = "PM Party (not in Government)", mean = 0, .before = 16) %>% 
   add_row(nice_names = "INTRA-PARTY CRITIQUE:", .before = 19) %>% 
-  add_row(nice_names = "Grass-root Members", mean = 0, .before = 20) %>% 
+  add_row(nice_names = "Rank-and-file Members", mean = 0, .before = 20) %>% 
   add_row(nice_names = "VOTING BEHAVIOR IN PARLIAMENT:", .before = 24) %>% 
   add_row(nice_names = "United Voting", mean = 0, .before = 25) %>% 
   add_row(nice_names = "BEHAVIOR AT PARTY CONFERENCE:", .before = 27) %>% 
@@ -75,7 +76,7 @@ cjoint::plot.amce(model_cjoint)
 dist_by_conference <- scenarios[role == "government party (not PM party)" &
                          conference %in% c("united", "neither united nor divided", "divided") &
                          parliament == "united" &
-                         critique == "grass-root members" &
+                         critique == "rank-and-file members" &
                          reform == "high" &
                          gender == "female" &
                          age == "38y" &
@@ -103,7 +104,7 @@ dev.off()
 dist_by_parliament <- scenarios[role == "government party (not PM party)" &
                                   conference == "united" &
                                   parliament %in% c("united", "divided") &
-                                  critique == "grass-root members" &
+                                  critique == "rank-and-file members" &
                                   reform == "high" &
                                   gender == "female" &
                                   age == "38y" &
@@ -129,7 +130,7 @@ dev.off()
 dist_by_reform <- scenarios[role == "government party (not PM party)" &
                                   conference == "united" &
                                   parliament == "united" &
-                                  critique == "grass-root members" &
+                                  critique == "rank-and-file members" &
                                   reform %in% c("low", "high") &
                                   gender == "female" &
                                   age == "38y" &
@@ -156,7 +157,7 @@ dev.off()
 dist_by_critique <- scenarios[role == "government party (not PM party)" &
                               conference == "united" &
                               parliament == "united" &
-                              critique %in% c("grass-root members", "former party leader", "party faction", "none") &
+                              critique %in% c("rank-and-file members", "former party leader", "party faction", "none") &
                               reform == "high" &
                               gender == "female" &
                               age == "38y" &
@@ -224,7 +225,7 @@ cases1_2b <- rbind(linpreds[role == "government party (not PM party)" &
                    linpreds[role == "opposition party" &
                               conference == "united" &
                               parliament == "united" &
-                              critique == "grass-root members" &
+                              critique == "rank-and-file members" &
                               reform == "high" &
                               gender == "female" &
                               age == "38y" &
