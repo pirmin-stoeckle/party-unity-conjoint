@@ -9,8 +9,6 @@ The results and the underlying statistical model are based on a conjoint experim
 You can use this shiny app directly from within `R` by running:
 
 ```r
-library(shiny)
-
 shiny::runGitHub(repo="party-unity-conjoint"
                  ,username="pirmin-stoeckle"
                  ,ref="main")

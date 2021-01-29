@@ -74,9 +74,8 @@ ui <- fluidPage(
    fluidRow(
      tabsetPanel(type = "tabs",
        tabPanel("Plot 1", plotOutput("plot"), tableOutput("table")),
-       tabPanel("Plot 2", plotOutput("plot2")),
-       tabPanel("Plot 3", plotOutput("plot3"))
-   ),
+       tabPanel("Plot 2", plotOutput("plot2"), tableOutput("table"))
+       )
    )
   )
 ))
@@ -115,7 +114,6 @@ server <- function(input, output) {
                               dist == input$dist_2
                             ,c("mean", "upper", "lower")]
     )
-    
   })
   
   
@@ -125,7 +123,7 @@ server <- function(input, output) {
     validate(
       need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
     )
-    # tranform linear predictions into probabilities in 1:1 competition
+    # transform linear predictions into probabilities in 1:1 competition
     predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
     colnames(predprob) <- c("prob","CI1","CI2")
     
@@ -140,7 +138,7 @@ server <- function(input, output) {
   
   # define output table
   output$table <- renderTable({
-    # add a warning if a the combination of attributes is restricted
+    # warning
     validate(
       need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
     )
@@ -148,58 +146,36 @@ server <- function(input, output) {
     predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second)*100)
     colnames(predprob) <- c("prob","CI1","CI2")
       
-    data.frame(Candidate=factor(c(1,2)), Prob=predprob$prob
+    data.frame(Party=factor(c(1,2)), Prob=predprob$prob
                  ,lowerCI=predprob$CI1, upperCI=predprob$CI2)
     })
   
   # define second output plot
   output$plot2 <- renderPlot({
-      if(nrow(rv_cases())==2){
-      predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
-      colnames(predprob) <- c("prob","CI1","CI2")
-      
-      # plot
-      par(mar=c(0,0,0,0))
-      plot(0,xlim=c(0,1),ylim=c(-9,10),type="n",axes=F,ann=F)
-      polygon(x=c(-.002,.5,.5,-.002),y=c(0,0,1,1),col=rgb(0,0,1,alpha=.3),border=F)
-      polygon(x=c(.5,1.002,1.002,.5),y=c(0,0,1,1),col=rgb(0,1,0,alpha=.3),border=F)
-      text(x=.1,y=2.5,"Choice 1",cex=.9,font=2)
-      text(x=.9,y=2.5,"Choice 2",cex=.9,font=2)
-      for(i in seq(0,1,by=.2)){
-        lines(x=c(i,i),y=c(1,0),lwd=.5)
-      }
-      lines(x=c(predprob$prob[2],predprob$prob[2]),y=c(1.5,-.5),lwd=2)
-      polygon(x=c(predprob$CI1[2],predprob$CI2[2]
-                  ,predprob$CI2[2],predprob$CI1[2])
-              ,y=c(-.2,-.2,1.2,1.2),col=rgb(0,0,0,alpha=.3),border=F)
-    } else {
-      plot(0,xlim=c(0,1),ylim=c(0,1),type="n",axes=F,ann=F)
-      text(x=.5,y=.5, "WARNING:\n Invalid combination\n of attributes.")
-    }
-    
-  })
-  
-  # define third output plot
-  output$plot3 <- renderPlot({
-    # add a warning if a the combination of attributes is restricted
+    # warning
     validate(
-      need(nrow(rv_cases()) == 2, 'WARNING: Invalid combination of attributes.')
+      need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
     )
-    # tranform linear predictions into probabilities in 1:1 competition
+    
     predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
     colnames(predprob) <- c("prob","CI1","CI2")
     
     # plot
-    ggplot(predprob[1,], aes(x = factor("Party 1 vs Party 2"), y = prob)) +
-      geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
-      ylim(c(0, 1)) +
-      ylab("Expected Probability to Vote for Party 1") +
-      xlab("") +
-      geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
-      coord_flip() +
-      theme_bw()
-    })
-    
+    par(mar=c(0,0,0,0))
+    plot(0,xlim=c(0,1),ylim=c(-9,10),type="n",axes=F,ann=F)
+    polygon(x=c(-.002,.5,.5,-.002),y=c(0,0,1,1),col=rgb(0,0,1,alpha=.3),border=F)
+    polygon(x=c(.5,1.002,1.002,.5),y=c(0,0,1,1),col=rgb(0,1,0,alpha=.3),border=F)
+    text(x=.1,y=2.5,"Party 1",cex=.9,font=2)
+    text(x=.9,y=2.5,"Party 2",cex=.9,font=2)
+    for(i in seq(0,1,by=.2)){
+      lines(x=c(i,i),y=c(1,0),lwd=.5)
+    }
+    lines(x=c(predprob$prob[2],predprob$prob[2]),y=c(1.5,-.5),lwd=2)
+    polygon(x=c(predprob$CI1[2],predprob$CI2[2]
+                ,predprob$CI2[2],predprob$CI1[2])
+            ,y=c(-.2,-.2,1.2,1.2),col=rgb(0,0,0,alpha=.3),border=F)
+  })
+  
 }
 
 
