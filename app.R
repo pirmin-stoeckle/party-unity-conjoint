@@ -74,7 +74,7 @@ ui <- fluidPage(
    fluidRow(
      tabsetPanel(type = "tabs",
        tabPanel("Plot 1", plotOutput("plot"), tableOutput("table")),
-       tabPanel("Plot 2", plotOutput("plot2"), tableOutput("table"))
+       tabPanel("Plot 2", plotOutput("plot2"))
        )
    )
   )
