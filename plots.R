@@ -40,7 +40,7 @@ pdata_tidy <- pdata %>%
   add_row(nice_names = "OCCUPATION:", .before = 8) %>% 
   add_row(nice_names = "Employee", mean = 0, .before = 9) %>% 
   add_row(nice_names = "PARTY ROLE:", .before = 15) %>% 
-  add_row(nice_names = "PM Party (not in Government)", mean = 0, .before = 16) %>% 
+  add_row(nice_names = "Governing party (not PM party)", mean = 0, .before = 16) %>% 
   add_row(nice_names = "INTRA-PARTY CRITIQUE:", .before = 19) %>% 
   add_row(nice_names = "Rank-and-file Members", mean = 0, .before = 20) %>% 
   add_row(nice_names = "VOTING BEHAVIOR IN PARLIAMENT:", .before = 24) %>% 
