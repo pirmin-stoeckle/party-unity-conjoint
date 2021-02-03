@@ -203,7 +203,7 @@ cases1_2a <- rbind(linpreds[role == "government party (not PM party)" &
                linpreds[role == "opposition party" &
                           conference == "divided" &
                           parliament == "divided" &
-                          critique == "former party leader" &
+                          critique == "none" &
                           reform == "low" &
                           gender == "female" &
                           age == "38y" &
@@ -225,7 +225,7 @@ cases1_2b <- rbind(linpreds[role == "government party (not PM party)" &
                    linpreds[role == "opposition party" &
                               conference == "united" &
                               parliament == "united" &
-                              critique == "rank-and-file members" &
+                              critique == "none" &
                               reform == "high" &
                               gender == "female" &
                               age == "38y" &
