@@ -93,9 +93,11 @@ dist_by_conference <- scenarios[role == "government party (not PM party)" &
                          .(conference, dist, lower, prob, upper)]
 
 #plot
-distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-  facet_wrap(vars(conference)) +
+distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist, shape = conference)) +
+  geom_pointrange(aes(xmin = lower, xmax = upper), 
+                  position = position_dodge(width = 0.25),
+                  size = 0.25) +
+  #facet_wrap(vars(conference)) +
   ggtitle("Behavior at party conference") +
   ylab("Ideological distance") +
   xlab("Predicted vote share versus baseline") +
@@ -211,12 +213,12 @@ cases1_2a <- rbind(linpreds[role == "government party (not PM party)" &
                linpreds[role == "opposition party" &
                           conference == "divided" &
                           parliament == "divided" &
-                          critique == "none" &
+                          critique == "party faction" &
                           reform == "low" &
                           gender == "female" &
                           age == "38y" &
                           job == "employee" &
-                          dist == 2
+                          dist == 1
                         ,c("mean", "upper", "lower")]
 )
 
@@ -234,11 +236,11 @@ cases1_2b <- rbind(linpreds[role == "government party (not PM party)" &
                               conference == "united" &
                               parliament == "united" &
                               critique == "none" &
-                              reform == "high" &
+                              reform == "low" &
                               gender == "female" &
                               age == "38y" &
                               job == "employee" &
-                              dist == 2
+                              dist == 1
                             ,c("mean", "upper", "lower")]
 )
 
