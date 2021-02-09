@@ -11,8 +11,8 @@ library(tidyverse)
 rm(list=ls())
 
 # load data from Stata where reshaping and some recoding is done (in data_preparation_for_R.do)
-dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
-#dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+#dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
 
 # label factors correctly
 dat$role <- factor(dat$role, levels=2:4,
