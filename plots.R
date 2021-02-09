@@ -66,6 +66,162 @@ pdf(file=paste0(getwd(),"/figures/amceplot.pdf"))
 amceplot
 dev.off()
 
+
+
+# alternative: AMCE base plot
+dat <- as.data.frame(pdata_tidy[!is.na(pdata_tidy$mean),])
+head(dat)
+
+# define group names
+unique(dat$nice_names)
+gender <- dat[dat$nice_names %in% c("Female","Male"),]
+age <- dat[dat$nice_names %in% c("38 years","56 years", "74 years"),]
+occup <- dat[dat$nice_names %in% c("Employee","Activist", "Lawyer","Politician"
+                                   ,"Entrepreneur", "Employee (retired)"),]
+role <- dat[dat$nice_names %in% c("Opposition party","PM party"
+                                  ,"Governing party (not PM party)"),]
+critique <- dat[dat$nice_names %in% c("Rank-and-file Members","Former party leader"
+                                      ,"Party faction","None"),]
+voting <- dat[dat$nice_names %in% c("United Voting","Divided Voting"),]
+congress <- dat[dat$nice_names %in% c("United","Neither united nor divided"
+                                      ,"Divided"),]
+clarity <- dat[dat$nice_names %in% c("High","Low"),]
+ideology <- dat[dat$nice_names %in% c("0","1","2","3","4"),]
+
+
+
+# PLOT (UGLY CODE!)
+ymax <- nrow(dat)+9
+ptype <- 1 # point type
+ltype <- 1 # line type
+pcex <- 1 # point size
+lcex <- 1 # line size
+par(oma=c(0,0,0,0),mar=c(2,0,2,5))
+plot(0,xlim=c(-.45,.05),ylim=c(0,ymax)
+     ,type="n",axes=F,ann=F)
+# ideological distance
+max <- ymax
+text(x=-.2,y=ymax,"Party: Ideological Distance",cex=.6)
+pos <- match(x=sort(ideology$mean,decreasing=T),table=ideology$mean)
+points(x=sort(ideology$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(ideology$lower[pos][i]
+            ,ideology$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Congress
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Party: Congress",cex=.6)
+pos <- match(x=sort(congress$mean,decreasing=T),table=congress$mean)
+points(x=sort(congress$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(congress$lower[pos][i]
+            ,congress$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Voting
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Party: Voting",cex=.6)
+pos <- match(x=sort(voting$mean,decreasing=T),table=voting$mean)
+points(x=sort(voting$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(voting$lower[pos][i]
+            ,voting$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Critique
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Party: Internal Critique",cex=.6)
+pos <- match(x=sort(critique$mean,decreasing=T),table=critique$mean)
+points(x=sort(critique$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(critique$lower[pos][i]
+            ,critique$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Clarity
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Party: Reform Clarity",cex=.6)
+pos <- match(x=sort(clarity$mean,decreasing=T),table=clarity$mean)
+points(x=sort(clarity$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(clarity$lower[pos][i]
+            ,clarity$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Role
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Party: Role",cex=.6)
+pos <- match(x=sort(role$mean,decreasing=T),table=role$mean)
+points(x=sort(role$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(role$lower[pos][i]
+            ,role$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Gender
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Candidate: Gender",cex=.6)
+pos <- match(x=sort(gender$mean,decreasing=T),table=gender$mean)
+points(x=sort(gender$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(gender$lower[pos][i]
+            ,gender$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Age
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Candidate: Age",cex=.6)
+pos <- match(x=sort(age$mean,decreasing=T),table=age$mean)
+points(x=sort(age$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(age$lower[pos][i]
+            ,age$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# Occupation
+max <- max-max(pos)-1
+text(x=-.2,y=max,"Candidate: Occupation",cex=.6)
+pos <- match(x=sort(occup$mean,decreasing=T),table=occup$mean)
+points(x=sort(occup$mean,decreasing=T)
+       ,y=c(max-pos),pch=ptype,cex=pcex)
+for(i in pos){
+  lines(x=c(occup$lower[pos][i]
+            ,occup$upper[pos][i])
+        ,y=c(max-pos[i]
+             ,max-pos[i]),lty=ltype,cex=lcex)
+}
+# line
+abline(v=0)
+# main
+mtext("AMCE",font=2,line=1)
+# axes
+axis(1)
+axis(4,at=ymax:1
+     #,labels=c()
+     ,las=1,cex.axis=.5)
+
+
+
+
+
+
 # alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
 cjoint::plot.amce(model_cjoint, group.order = c("gender",
                                                 "age",
