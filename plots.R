@@ -67,8 +67,16 @@ amceplot
 dev.off()
 
 # alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
-cjoint::plot.amce(model_cjoint)
-# -> looks pretty similar
+cjoint::plot.amce(model_cjoint, group.order = c("gender",
+                                                "age",
+                                                "job",
+                                                "role",
+                                                "critique",
+                                                "parliament",
+                                                "conference",
+                                                "reform",
+                                                "dist"))
+# -> similar but not identical
 
 # scenarios from analysis.R can be used to get probabilities for scenarios compared to baseline
 
