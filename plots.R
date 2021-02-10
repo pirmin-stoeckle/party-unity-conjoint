@@ -68,156 +68,91 @@ dev.off()
 
 
 
-# alternative: AMCE base plot
-dat <- as.data.frame(pdata_tidy[!is.na(pdata_tidy$mean),])
-head(dat)
-
+### alternative: AMCE base plot
 # define group names
-unique(dat$nice_names)
-gender <- dat[dat$nice_names %in% c("Female","Male"),]
-age <- dat[dat$nice_names %in% c("38 years","56 years", "74 years"),]
-occup <- dat[dat$nice_names %in% c("Employee","Activist", "Lawyer","Politician"
+unique(pdata_tidy$nice_names)
+gender <- pdata_tidy[pdata_tidy$nice_names %in% c("Female","Male"),]
+age <- pdata_tidy[pdata_tidy$nice_names %in% c("38 years","56 years", "74 years"),]
+occup <- pdata_tidy[pdata_tidy$nice_names %in% c("Employee","Activist", "Lawyer","Politician"
                                    ,"Entrepreneur", "Employee (retired)"),]
-role <- dat[dat$nice_names %in% c("Opposition party","PM party"
+role <- pdata_tidy[pdata_tidy$nice_names %in% c("Opposition party","PM party"
                                   ,"Governing party (not PM party)"),]
-critique <- dat[dat$nice_names %in% c("Rank-and-file Members","Former party leader"
+critique <- pdata_tidy[pdata_tidy$nice_names %in% c("Rank-and-file Members","Former party leader"
                                       ,"Party faction","None"),]
-voting <- dat[dat$nice_names %in% c("United Voting","Divided Voting"),]
-congress <- dat[dat$nice_names %in% c("United","Neither united nor divided"
+voting <- pdata_tidy[pdata_tidy$nice_names %in% c("United Voting","Divided Voting"),]
+congress <- pdata_tidy[pdata_tidy$nice_names %in% c("United","Neither united nor divided"
                                       ,"Divided"),]
-clarity <- dat[dat$nice_names %in% c("High","Low"),]
-ideology <- dat[dat$nice_names %in% c("0","1","2","3","4"),]
+clarity <- pdata_tidy[pdata_tidy$nice_names %in% c("High","Low"),]
+ideology <- pdata_tidy[pdata_tidy$nice_names %in% c("0","1","2","3","4"),]
+
+# order attribute levels
+gender <- gender[order(abs(gender$mean)),]
+age <- age[order(abs(age$mean)),]
+occup <- occup[order(abs(occup$mean)),]
+role <- role[order(abs(role$mean)),]
+critique <- critique[order(abs(critique$mean)),]
+voting <- voting[order(abs(voting$mean)),]
+congress <- congress[order(abs(congress$mean)),]
+clarity <- clarity[order(abs(clarity$mean)),]
+ideology <- ideology[order(abs(ideology$mean)),]
+
+# adjust label
+role$nice_names[role$nice_names=="Governing party (not PM party)"] <- "Junior Coalition Partner"
+
+# create data frame in correct attribute order
+plotdata <- rbind(NA,ideology,NA,congress,NA,voting,NA,critique
+                  ,NA,clarity,NA,role,NA,gender,NA,age,NA,occup
+                  ,fill=TRUE)
+napos <- which(is.na(plotdata$nice_names)) # position of NAs
 
 
-
-# PLOT (UGLY CODE!)
-ymax <- nrow(dat)+9
-ptype <- 1 # point type
+# PLOT
+ptype <- 20 # point type
 ltype <- 1 # line type
 pcex <- 1 # point size
 lcex <- 1 # line size
-par(oma=c(0,0,0,0),mar=c(2,0,2,5))
-plot(0,xlim=c(-.45,.05),ylim=c(0,ymax)
+#png(file=paste0(getwd(),"/figures/amceplot2.png"),width=400, height=450)
+pdf(file=paste0(getwd(),"/figures/amceplot2.pdf"),width=6, height=7)
+par(oma=c(0,0,0,0),mar=c(3,0,2,7.5))
+plot(0,xlim=c(-.5,0),ylim=c(1,nrow(plotdata))
      ,type="n",axes=F,ann=F)
-# ideological distance
-max <- ymax
-text(x=-.2,y=ymax,"Party: Ideological Distance",cex=.6)
-pos <- match(x=sort(ideology$mean,decreasing=T),table=ideology$mean)
-points(x=sort(ideology$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(ideology$lower[pos][i]
-            ,ideology$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
+# gray polygon
+polygon(x=c(-1,1,1,-1),y=c(-20,-20,50,50),border=F,col=alpha("gray",alpha=.15))
+# add white lines
+abline(v=c(-.5,-.4,-.3,-.2,-.1),col="white")
+abline(h=nrow(plotdata)+1-napos,col="white",lwd=8)
+# points and lines
+points(x=plotdata$mean
+       ,y=nrow(plotdata):1,pch=ptype,cex=pcex)
+for(i in 1:nrow(plotdata)){
+  lines(x=c(plotdata$lower[i],plotdata$upper[i])
+        ,y=c(nrow(plotdata)+1-i,nrow(plotdata)+1-i),lty=ltype,cex=lcex)
 }
-# Congress
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Party: Congress",cex=.6)
-pos <- match(x=sort(congress$mean,decreasing=T),table=congress$mean)
-points(x=sort(congress$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(congress$lower[pos][i]
-            ,congress$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Voting
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Party: Voting",cex=.6)
-pos <- match(x=sort(voting$mean,decreasing=T),table=voting$mean)
-points(x=sort(voting$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(voting$lower[pos][i]
-            ,voting$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Critique
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Party: Internal Critique",cex=.6)
-pos <- match(x=sort(critique$mean,decreasing=T),table=critique$mean)
-points(x=sort(critique$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(critique$lower[pos][i]
-            ,critique$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Clarity
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Party: Reform Clarity",cex=.6)
-pos <- match(x=sort(clarity$mean,decreasing=T),table=clarity$mean)
-points(x=sort(clarity$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(clarity$lower[pos][i]
-            ,clarity$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Role
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Party: Role",cex=.6)
-pos <- match(x=sort(role$mean,decreasing=T),table=role$mean)
-points(x=sort(role$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(role$lower[pos][i]
-            ,role$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Gender
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Candidate: Gender",cex=.6)
-pos <- match(x=sort(gender$mean,decreasing=T),table=gender$mean)
-points(x=sort(gender$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(gender$lower[pos][i]
-            ,gender$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Age
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Candidate: Age",cex=.6)
-pos <- match(x=sort(age$mean,decreasing=T),table=age$mean)
-points(x=sort(age$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(age$lower[pos][i]
-            ,age$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
-# Occupation
-max <- max-max(pos)-1
-text(x=-.2,y=max,"Candidate: Occupation",cex=.6)
-pos <- match(x=sort(occup$mean,decreasing=T),table=occup$mean)
-points(x=sort(occup$mean,decreasing=T)
-       ,y=c(max-pos),pch=ptype,cex=pcex)
-for(i in pos){
-  lines(x=c(occup$lower[pos][i]
-            ,occup$upper[pos][i])
-        ,y=c(max-pos[i]
-             ,max-pos[i]),lty=ltype,cex=lcex)
-}
+# category text
+text(x=-.25,y=nrow(plotdata)+1-napos[1],"Party: Ideological Distance",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[2],"Party: Congress",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[3],"Party: Voting",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[4],"Party: Internal Critique",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[5],"Party: Clarity",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[6],"Party: Role",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[7],"Candidate: Gender",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[8],"Candidate: Age",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[9],"Candidate: Occupation",font=2,cex=.6)
 # line
-abline(v=0)
+abline(v=0,lty=2)
 # main
 mtext("AMCE",font=2,line=1)
 # axes
-axis(1)
-axis(4,at=ymax:1
-     #,labels=c()
-     ,las=1,cex.axis=.5)
-
-
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.8)
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.8)
+axis(4,at=c(50,seq(from=nrow(plotdata),to=1)[-napos],-5)
+     ,labels=NA,cex.axis=.7)
+axis(4,at=c(50,seq(from=nrow(plotdata),to=1)[-napos])
+     ,labels=c("NA",plotdata$nice_names[-napos])
+     ,las=1,lwd=0,line=-.3,cex.axis=.7)
+# label
+mtext(side=1,"Change: Pr(Vote)",outer=F,line=1.7)
+dev.off()
 
 
 
@@ -266,6 +201,63 @@ distplot_conference
 dev.off()
 
 
+
+# ALTERNATIVE PLOT
+#png(file=paste0(getwd(),"/figures/distplot_conference2.png"),width=300, height=200)
+pdf(file=paste0(getwd(),"/figures/distplot_conference2.pdf"),width=7, height=3)
+par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+plot(0,xlim=c(.5,5.5),ylim=c(0,50)
+     ,type="n",axes=F,ann=F)
+# gray polygon
+polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+# add white lines
+abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+# points & lines
+for(i in as.numeric(unique(dist_by_conference$dist))){
+  points(x=i-.1
+         ,y=dist_by_conference$prob[dist_by_conference$conference=="united"
+                                    & as.numeric(dist_by_conference$dist)==i]
+         ,pch=20
+         ,cex=.8)
+  lines(x=c(i-.1,i-.1)
+        ,y=c(dist_by_conference$lower[dist_by_conference$conference=="united"
+                                      & as.numeric(dist_by_conference$dist)==i]
+             ,dist_by_conference$upper[dist_by_conference$conference=="united"
+                                      & as.numeric(dist_by_conference$dist)==i]))
+  points(x=i
+         ,y=dist_by_conference$prob[dist_by_conference$conference=="neither united nor divided"
+                                    & as.numeric(dist_by_conference$dist)==i]
+         ,pch=4
+         ,cex=.8)
+  lines(x=c(i,i)
+        ,y=c(dist_by_conference$lower[dist_by_conference$conference=="neither united nor divided"
+                                      & as.numeric(dist_by_conference$dist)==i]
+             ,dist_by_conference$upper[dist_by_conference$conference=="neither united nor divided"
+                                       & as.numeric(dist_by_conference$dist)==i]))
+  points(x=i+.1
+         ,y=dist_by_conference$prob[dist_by_conference$conference=="divided"
+                                    & as.numeric(dist_by_conference$dist)==i]
+         ,pch=17
+         ,cex=.8)
+  lines(x=c(i+.1,i+.1)
+        ,y=c(dist_by_conference$lower[dist_by_conference$conference=="divided"
+                                      & as.numeric(dist_by_conference$dist)==i]
+             ,dist_by_conference$upper[dist_by_conference$conference=="divided"
+                                       & as.numeric(dist_by_conference$dist)==i]))
+}
+# main
+mtext("Behavior at Party Congress",font=2,line=.5)
+# axes
+axis(1,at=c(-1,1:6),labels=c("",0:4,""))
+axis(2,las=1)
+mtext("Predicted Vote Share vs. Baseline",side=2,line=2)
+mtext("Ideological Distance",side=1,line=2)
+# legend
+legend("topright",pch=c(20,4,17),legend=c("United","Neither","Divided"),cex=.8,bg="white")
+dev.off()
+
+
+
 # Effect of ideological distance by unity in parliamentary voting
 dist_by_parliament <- scenarios[role == "government party (not PM party)" &
                                   conference == "united" &
@@ -291,6 +283,56 @@ distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
 pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 7, height = 3)
 distplot_parliament
 dev.off()
+
+
+# ALTERNATIVE PLOT
+#png(file=paste0(getwd(),"/figures/distplot_parliament2.png"),width=300, height=200)
+pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
+par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+plot(0,xlim=c(.5,5.5),ylim=c(0,50)
+     ,type="n",axes=F,ann=F)
+# gray polygon
+polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+# add white lines
+abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+# points & lines
+for(i in as.numeric(unique(dist_by_parliament$dist))){
+  points(x=i-.1
+         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="united"
+                                    & as.numeric(dist_by_parliament$dist)==i]
+         ,pch=20
+         ,cex=.8)
+  lines(x=c(i-.1,i-.1)
+        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="united"
+                                      & as.numeric(dist_by_parliament$dist)==i]
+             ,dist_by_parliament$upper[dist_by_parliament$parliament=="united"
+                                       & as.numeric(dist_by_parliament$dist)==i]))
+  points(x=i+.1
+         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="divided"
+                                    & as.numeric(dist_by_parliament$dist)==i]
+         ,pch=4
+         ,cex=.8)
+  lines(x=c(i+.1,i+.1)
+        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="divided"
+                                      & as.numeric(dist_by_parliament$dist)==i]
+             ,dist_by_parliament$upper[dist_by_parliament$parliament=="divided"
+                                       & as.numeric(dist_by_parliament$dist)==i]))
+}
+# main
+mtext("Voting Behavior in Parliament",font=2,line=.5)
+# axes
+axis(1,at=c(-1,1:6),labels=c("",0:4,""))
+axis(2,las=1)
+mtext("Predicted Vote Share vs. Baseline",side=2,line=2)
+mtext("Ideological Distance",side=1,line=2)
+# legend
+legend("topright",pch=c(20,4),legend=c("United","Divided"),cex=.8,bg="white")
+dev.off()
+
+
+
+
+
 
 # Effect of ideological distance by reform clarity
 dist_by_reform <- scenarios[role == "government party (not PM party)" &
@@ -345,6 +387,79 @@ distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
 pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 3)
 distplot_critique
 dev.off()
+
+
+
+# ALTERNATIVE PLOT
+#png(file=paste0(getwd(),"/figures/distplot_critique2.png"),width=300, height=200)
+pdf(file=paste0(getwd(),"/figures/distplot_critique2.pdf"),width=7, height=3)
+par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+plot(0,xlim=c(.5,5.5),ylim=c(0,50)
+     ,type="n",axes=F,ann=F)
+# gray polygon
+polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+# add white lines
+abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+# points & lines
+for(i in as.numeric(unique(dist_by_critique$dist))){
+  # rank and file
+  points(x=i-.15
+         ,y=dist_by_critique$prob[dist_by_critique$critique=="rank-and-file members"
+                                    & as.numeric(dist_by_critique$dist)==i]
+         ,pch=20
+         ,cex=.8)
+  lines(x=c(i-.15,i-.15)
+        ,y=c(dist_by_critique$lower[dist_by_critique$critique=="rank-and-file members"
+                                      & as.numeric(dist_by_critique$dist)==i]
+             ,dist_by_critique$upper[dist_by_critique$critique=="rank-and-file members"
+                                       & as.numeric(dist_by_critique$dist)==i]))
+  # none
+  points(x=i-.05
+         ,y=dist_by_critique$prob[dist_by_critique$critique=="none"
+                                  & as.numeric(dist_by_critique$dist)==i]
+         ,pch=4
+         ,cex=.8)
+  lines(x=c(i-.05,i-.05)
+        ,y=c(dist_by_critique$lower[dist_by_critique$critique=="none"
+                                    & as.numeric(dist_by_critique$dist)==i]
+             ,dist_by_critique$upper[dist_by_critique$critique=="none"
+                                     & as.numeric(dist_by_critique$dist)==i]))
+  # former leader
+  points(x=i+.05
+         ,y=dist_by_critique$prob[dist_by_critique$critique=="former party leader"
+                                    & as.numeric(dist_by_critique$dist)==i]
+         ,pch=17
+         ,cex=.8)
+  lines(x=c(i+.05,i+.05)
+        ,y=c(dist_by_critique$lower[dist_by_critique$critique=="former party leader"
+                                      & as.numeric(dist_by_critique$dist)==i]
+             ,dist_by_critique$upper[dist_by_critique$critique=="former party leader"
+                                       & as.numeric(dist_by_critique$dist)==i]))
+  # faction
+  points(x=i+.15
+         ,y=dist_by_critique$prob[dist_by_critique$critique=="party faction"
+                                  & as.numeric(dist_by_critique$dist)==i]
+         ,pch=18
+         ,cex=.8)
+  lines(x=c(i+.15,i+.15)
+        ,y=c(dist_by_critique$lower[dist_by_critique$critique=="party faction"
+                                    & as.numeric(dist_by_critique$dist)==i]
+             ,dist_by_critique$upper[dist_by_critique$critique=="party faction"
+                                     & as.numeric(dist_by_critique$dist)==i]))
+  
+}
+# main
+mtext("Intra-Party Critique",font=2,line=.5)
+# axes
+axis(1,at=c(-1,1:6),labels=c("",0:4,""))
+axis(2,las=1)
+mtext("Predicted Vote Share vs. Baseline",side=2,line=2)
+mtext("Ideological Distance",side=1,line=2)
+# legend
+legend("topright",pch=c(20,4,17,18),legend=c("Rank-and-file","None","Former Leader","Faction")
+       ,cex=.8,bg="white")
+dev.off()
+
 
 ###############################################
 # simulating specific competitions
@@ -423,4 +538,43 @@ competitionplot <- ggplot(predprob, aes(x = fct_rev(fct_inorder(c("Party 1 vs Pa
 #save plot to pdf
 pdf(file=paste0(getwd(),"/figures/competitionplot.pdf"), width = 7, height = 3)
 competitionplot
+dev.off()
+
+
+
+# ALTERNATIVE PLOT
+#png(file=paste0(getwd(),"/figures/competitionplot2.png"), width=400, height=100)
+pdf(file=paste0(getwd(),"/figures/competitionplot2.pdf"), width=7, height=2)
+par(mar=c(0,0,0,0),mar=c(0,.5,0,.5))
+plot(0,xlim=c(0,1),ylim=c(-4.5,2),type="n",axes=F,ann=F)
+# 1 vs. 2a
+polygon(x=c(-.002,1.002,1.002,-.002),y=c(0,0,1,1),border=F
+        ,col=alpha("gray",alpha=.3))
+text(x=.05,y=1.8,"Party 1",cex=.9,font=2)
+text(x=.95,y=1.8,"Party 2a",cex=.9,font=2)
+for(i in seq(0,1,by=.2)){
+  lines(x=c(i,i),y=c(1,0),lwd=.5)
+}
+polygon(x=c(1-predprob$CI1[1],1-predprob$CI2[1]
+            ,1-predprob$CI2[1],1-predprob$CI1[1])
+        ,y=c(-.2,-.2,1.2,1.2),col=alpha("gray",alpha=.8),border=F)
+lines(x=c(1-predprob$prob[1],1-predprob$prob[1]),y=c(1.5,-.5),lwd=2)
+text(x=.05,y=-.5,paste0("(",round(predprob$prob[1],2),"%)"),cex=.8)
+text(x=.95,y=-.5,paste0("(",1-round(predprob$prob[1],2),"%)"),cex=.8)
+# 1 vs. 2b
+polygon(x=c(-.002,1.002,1.002,-.002),y=c(-4,-4,-3,-3),border=F
+        ,col=alpha("gray",alpha=.3))
+text(x=.05,y=-2.2,"Party 1",cex=.9,font=2)
+text(x=.95,y=-2.2,"Party 2b",cex=.9,font=2)
+for(i in seq(0,1,by=.2)){
+  lines(x=c(i,i),y=c(-4,-3),lwd=.5)
+}
+polygon(x=c(1-predprob$CI1[2],1-predprob$CI2[2]
+            ,1-predprob$CI2[2],1-predprob$CI1[2])
+        ,y=c(-4.2,-4.2,-2.8,-2.8),col=alpha("gray",alpha=.8),border=F)
+lines(x=c(1-predprob$prob[2],1-predprob$prob[2]),y=c(-4.5,-2.5),lwd=2)
+text(x=.05,y=-4.5,paste0("(",round(predprob$prob[2],2),"%)"),cex=.8)
+text(x=.95,y=-4.5,paste0("(",1-round(predprob$prob[2],2),"%)"),cex=.8)
+# vertical line
+abline(v=.5,lty=2)
 dev.off()
