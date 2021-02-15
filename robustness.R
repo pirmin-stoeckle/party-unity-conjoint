@@ -1,11 +1,53 @@
+# load packages
+library(data.table)
+library(tidyverse)
 
+# load data:
+#source(analysis.R)
+
+######################################################################
+# data check: do party ratings correspond to chosen parties?
+######################################################################
+
+dat %>% 
+  filter(!is.na(rating)) %>%
+  pivot_wider(
+    id_cols = id_screen,
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating,
+    values_fn = mean
+  ) %>% 
+  mutate(correct_order = (rating_1 >= rating_0)) %>% 
+  count(correct_order) %>% 
+  mutate(freq = n/sum(n))
+
+# within the whole sample, 93% of ratings show a correct ordering (chosen better than not chosen)
+
+dat %>% 
+  filter(!is.na(rating)) %>%
+  filter(complete.cases(chosen, dist)) %>% # restrict to our used sample for estimation
+  pivot_wider(
+    id_cols = id_screen,
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating,
+    values_fn = mean
+  ) %>% 
+  mutate(correct_order = (rating_1 >= rating_0)) %>% 
+  count(correct_order) %>% 
+  mutate(freq = n/sum(n))
+
+# within our analysis sample, 94% of ratings show a correct ordering (chosen better than not chosen)
+
+
+# we could re-run everything just with respondents with "correct order",
+# but that information is only available for a subset, so we just have to trust
+# that that level or "errors" is acceptable.
 
 ######################################################################
 # comparison of model specifications
 ######################################################################
-
-# load data:
-#source(analysis.R)
 
 # exclude missings
 dat.cbc <- dat[complete.cases(chosen, dist), ]
@@ -206,11 +248,6 @@ mlogit1 <- mlogit(chosen ~
 # now it works...
 summary(mlogit1)
 
-var_cov <- solve(-m1$hessian)
-se <- std_err <- sqrt(diag(var_cov))
-
-summary(m1)$CoefTable
-
 # compare this to clogit (our approach) with same data subset
 model_clogit_subset <- clogit(chosen~
                          gender
@@ -242,7 +279,7 @@ data.frame(clogit_coef = summary(model_clogit_subset)$coef[,1],
 
 # some additional tests
 # should we include an intercept in the conditional mlogit model?
-# if yes, then one of the alternatives is more preffered irrespective of content
+# if yes, then one of the alternatives is more preferred irrespective of content
 mlogit2 <- mlogit(chosen ~ 
                gender
              +age
@@ -255,7 +292,7 @@ mlogit2 <- mlogit(chosen ~
              +dist, dat.mlogit)
 summary(mlogit2)
 
-lrtest(mlogit1, mlogit2) # interpcet makes no differnece --> good
+lrtest(mlogit1, mlogit2) # intercept makes no difference --> good
 
 # pure multinomial model
 mlogit3 <- mlogit(chosen ~ 0 |
@@ -270,7 +307,7 @@ mlogit3 <- mlogit(chosen ~ 0 |
              + dist, dat.mlogit)
 summary(mlogit3)
 
-lrtest(mlogit1, mlogit3) # conditinal model is better
+lrtest(mlogit1, mlogit3) # conditional model is better
 
 
 
