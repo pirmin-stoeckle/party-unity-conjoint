@@ -1,4 +1,47 @@
+library(data.table)
+library(tidyverse)
 
+######################################################################
+# data check: do party ratings correspond to chosen parties?
+######################################################################
+# load data:
+#source(analysis.R)
+
+dat %>% 
+  filter(!is.na(rating)) %>%
+  pivot_wider(
+    id_cols = id_screen,
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating,
+    values_fn = mean
+  ) %>% 
+  mutate(correct_order = (rating_1 >= rating_0)) %>% 
+  count(correct_order) %>% 
+  mutate(freq = n/sum(n))
+
+# within the whole sample, 93% of ratings show a correct ordering (chosen better than not chosen)
+
+dat %>% 
+  filter(!is.na(rating)) %>%
+  filter(complete.cases(chosen, dist)) %>% # restrict to our used sample for estimation
+  pivot_wider(
+    id_cols = id_screen,
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating,
+    values_fn = mean
+  ) %>% 
+  mutate(correct_order = (rating_1 >= rating_0)) %>% 
+  count(correct_order) %>% 
+  mutate(freq = n/sum(n))
+
+# within our analysis sample, 94% of ratings show a correct ordering (chosen better than not chosen)
+
+
+# we could re-run everything just with respondents with "correct order",
+# but that information is only available for a subset, so we just have to trust
+# that that level or "errors" is acceptable.
 
 ######################################################################
 # comparison of model specifications

@@ -11,8 +11,8 @@ library(tidyverse)
 rm(list=ls())
 
 # load data from Stata where reshaping and some recoding is done (in data_preparation_for_R.do)
-#dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
-dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+#dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
 
 # label factors correctly
 dat$role <- factor(dat$role, levels=2:4,
@@ -54,20 +54,6 @@ dat$dist <- factor(dat$dist, levels=0:4)
 # choice data descriptives
 head(dat)
 summary(dat)
-
-# data check: do party ratings correspond to chosen parties?
-dat %>% 
-    filter(!is.na(rating)) %>%
-    pivot_wider(
-        id_cols = id_screen,
-        names_from = chosen,
-        names_prefix = "rating_",
-        values_from = rating,
-        values_fn = mean
-    ) %>% 
-    mutate(correct_order = (rating_1 >= rating_0)) %>% 
-    count(correct_order) %>% 
-    mutate(freq = n/sum(n))
 
 # what is the sample size after removal of missings?
 dat[complete.cases(chosen, dist), #other variables relevant for model are non-missing by design
