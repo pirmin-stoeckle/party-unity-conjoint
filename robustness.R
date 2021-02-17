@@ -55,7 +55,6 @@ dat %>%
       geom_col()+
       ylab("Share of party ratings not matching the choice") +
       scale_x_discrete(limits = c(1:10)) 
-# -> yes. how bad is this?
 
 # we could re-run everything excluding respondents with any incorrect ordering (same did multiple orderings)
 # extract id of incorrect orderings
