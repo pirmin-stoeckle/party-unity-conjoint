@@ -5,43 +5,114 @@ library(tidyverse)
 # data check: do party ratings correspond to chosen parties?
 ######################################################################
 # load data:
-#source(analysis.R)
+source("analysis.R")
+
 
 dat %>% 
-  filter(!is.na(rating)) %>%
+  filter(complete.cases(rating, chosen)) %>% 
   pivot_wider(
-    id_cols = id_screen,
+    id_cols = c(id_g, id_screen, screen),
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating
+  ) %>% 
+  mutate(incorrect_order = (rating_1 < rating_0)) %>% 
+  count(incorrect_order) %>% 
+  mutate(freq = n/sum(n))
+
+# -> within the whole sample, 6% of ratings show a correct ordering (chosen worse than not chosen, 
+# conditional on having rated and having chosen, NA's here represent cases where only one party was rated)
+
+dat %>% 
+  filter(complete.cases(rating, chosen, dist)) %>% # restrict to our used sample for estimation including dist variable
+  pivot_wider(
+    id_cols = c(id_g, id_screen, screen),
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating
+  ) %>% 
+  mutate(incorrect_order = (rating_1 < rating_0)) %>%
+  count(incorrect_order) %>% 
+  mutate(freq = n/sum(n))
+
+# -> same for our analysis sample
+
+# are there more incorrect orderings on later screens?
+dat %>% 
+  filter(complete.cases(rating, chosen)) %>%
+  pivot_wider(
+    id_cols = c(id_g, id_screen, screen),
+    names_from = chosen,
+    names_prefix = "rating_",
+    values_from = rating
+  ) %>% 
+  mutate(incorrect_order = (rating_1 < rating_0)) %>%
+  group_by(screen) %>% 
+  count(incorrect_order) %>% 
+  mutate(freq = n/sum(n)) %>% 
+  filter(incorrect_order != "FALSE") %>% 
+    ggplot(aes(x = screen, y = freq, group = incorrect_order)) +
+      geom_col()+
+      ylab("Share of party ratings not matching the choice") +
+      scale_x_discrete(limits = c(1:10)) 
+# -> yes. how bad is this?
+
+# we could re-run everything excluding respondents with any incorrect ordering (same did multiple orderings)
+# extract id of incorrect orderings
+id_g_incorrect_ordering <- dat %>% 
+  filter(complete.cases(rating, chosen)) %>% 
+  pivot_wider(
+    id_cols = c(id_g, id_screen, screen),
     names_from = chosen,
     names_prefix = "rating_",
     values_from = rating,
     values_fn = mean
   ) %>% 
-  mutate(correct_order = (rating_1 >= rating_0)) %>% 
-  count(correct_order) %>% 
-  mutate(freq = n/sum(n))
+  mutate(incorrect_order = (rating_1 < rating_0)) %>% 
+  filter(incorrect_order== TRUE) %>% 
+  pull(id_g)
 
-# within the whole sample, 93% of ratings show a correct ordering (chosen better than not chosen)
+dat_correct_ratings <- dat %>% 
+  filter(!id_g %in% id_g_incorrect_ordering) 
 
-dat %>% 
-  filter(!is.na(rating)) %>%
-  filter(complete.cases(chosen, dist)) %>% # restrict to our used sample for estimation
-  pivot_wider(
-    id_cols = id_screen,
-    names_from = chosen,
-    names_prefix = "rating_",
-    values_from = rating,
-    values_fn = mean
-  ) %>% 
-  mutate(correct_order = (rating_1 >= rating_0)) %>% 
-  count(correct_order) %>% 
-  mutate(freq = n/sum(n))
+# exclude missings
+dat_correct_ratings.cbc <- dat_correct_ratings[complete.cases(chosen, dist), ]
+length(unique(dat_correct_ratings.cbc$id_g))
+# sample size (respondents) of 3395
 
-# within our analysis sample, 94% of ratings show a correct ordering (chosen better than not chosen)
+model_clogit_correct_ratings <- clogit(chosen~
+                         gender
+                       +age
+                       +job
+                       +role
+                       +critique
+                       +parliament
+                       +conference
+                       +reform
+                       +dist
+                       +strata(id_screen)
+                       +cluster(id_g)
+                       ,data=dat_correct_ratings.cbc, method="efron", robust=TRUE)
 
+summary(model_clogit_correct_ratings)
 
-# we could re-run everything just with respondents with "correct order",
-# but that information is only available for a subset, so we just have to trust
-# that that level or "errors" is acceptable.
+# custom function to get data for AMCE plot in consistent format
+compute_amce_clogit_correct_ratings <- function(model) {
+  coefs <- coef(model) #get coefficients 
+  ses <- summary(model)$coefficients[,4] #get ROBUST ses
+  names <- rownames(summary(model)$coefficients) #get names of coefs
+  pdata <- data.table(amce=(1/(1+exp(-coefs)))-.5, #compute probability difference to all 0's scenario
+                      lower=(1/(1+exp(-(coefs-(1.96*ses)))))-.5, #compute corresponding CI
+                      upper=(1/(1+exp(-(coefs+(1.96*ses)))))-.5, #compute corresponding CI
+                      names=names,
+                      coefs = coefs, 
+                      ses = ses,
+                      specification = "clogit_correct_ratings"
+  )
+  return(pdata)
+}
+
+pdata_clogit_correct_ratings <- compute_amce_clogit_correct_ratings(model = model_clogit_correct_ratings)
 
 ######################################################################
 # comparison of model specifications
@@ -164,10 +235,12 @@ pdata_lm <- compute_amce_lm(model = model_lm)
 
 
 # join in one dataframe
-pdata_comp <- rbind(pdata_clogit, pdata_lm, pdata_cjoint)
 
-#plot
-amceplot_robustness <- ggplot(pdata_comp, aes(x = amce, y = names, shape = specification)) + 
+pdata_robustness1 <- rbind(pdata_clogit, pdata_cjoint)
+pdata_robustness2 <- rbind(pdata_clogit, pdata_clogit_correct_ratings)
+
+#plot 1
+amceplot_robustness1 <- ggplot(pdata_robustness1, aes(x = amce, y = names, shape = specification)) + 
   geom_pointrange(aes(xmin = lower, xmax = upper), 
                   size = 0.25,
                   position = position_dodge(width = 0.5))+
@@ -176,8 +249,22 @@ amceplot_robustness <- ggplot(pdata_comp, aes(x = amce, y = names, shape = speci
   ylab("")
 
 #save plot to pdf
-pdf(file=paste0(getwd(),"/figures/amceplot_robustness.pdf"))
-amceplot_robustness
+pdf(file=paste0(getwd(),"/figures/amceplot_robustness1.pdf"))
+amceplot_robustness1
+dev.off()
+
+#plot 2
+amceplot_robustness2 <- ggplot(pdata_robustness2, aes(x = amce, y = names, shape = specification)) + 
+  geom_pointrange(aes(xmin = lower, xmax = upper), 
+                  size = 0.25,
+                  position = position_dodge(width = 0.5))+
+  geom_vline(xintercept = 0, linetype = 3) +
+  xlab("Change: Pr(Vote for the respective candidate)") +
+  ylab("")
+
+#save plot to pdf
+pdf(file=paste0(getwd(),"/figures/amceplot_robustness2.pdf"))
+amceplot_robustness2
 dev.off()
 
 # textbook approach for choice-based conjoint based on mlogit package
