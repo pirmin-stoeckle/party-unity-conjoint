@@ -96,11 +96,11 @@ congress <- congress[order(abs(congress$mean)),]
 clarity <- clarity[order(abs(clarity$mean)),]
 ideology <- ideology[order(abs(ideology$mean)),]
 
-# adjust label
+# adjust labels
 role$nice_names[role$nice_names=="Governing party (not PM party)"] <- "Junior Coalition Partner"
 
 # create data frame in correct attribute order
-plotdata <- rbind(NA,ideology,NA,congress,NA,voting,NA,critique
+plotdata <- rbind(NA,ideology,NA,critique,NA,voting,NA,congress
                   ,NA,clarity,NA,role,NA,gender,NA,age,NA,occup
                   ,fill=TRUE)
 napos <- which(is.na(plotdata$nice_names)) # position of NAs
@@ -113,7 +113,7 @@ pcex <- 1 # point size
 lcex <- 1 # line size
 #png(file=paste0(getwd(),"/figures/amceplot2.png"),width=400, height=450)
 pdf(file=paste0(getwd(),"/figures/amceplot2.pdf"),width=6, height=7)
-par(oma=c(0,0,0,0),mar=c(3,0,2,7.5))
+par(oma=c(0,0,0,0),mar=c(3,0,0,7.5))
 plot(0,xlim=c(-.5,0),ylim=c(1,nrow(plotdata))
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -129,19 +129,17 @@ for(i in 1:nrow(plotdata)){
         ,y=c(nrow(plotdata)+1-i,nrow(plotdata)+1-i),lty=ltype,cex=lcex)
 }
 # category text
-text(x=-.25,y=nrow(plotdata)+1-napos[1],"Party: Ideological Distance",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[2],"Party: Congress",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[3],"Party: Voting",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[4],"Party: Internal Critique",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[5],"Party: Clarity",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[6],"Party: Role",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[7],"Candidate: Gender",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[8],"Candidate: Age",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata)+1-napos[9],"Candidate: Occupation",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[1],"Ideological Distance",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[2],"Intra-Party Critique",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[3],"Parliamentary Voting Behavior",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[4],"Behavior at Congress",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[5],"Reform Clarity",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[6],"Party Role",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[7],"Gender of Candidate",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[8],"Age of Candidate",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata)+1-napos[9],"Candidate's Occupation",font=2,cex=.6)
 # line
 abline(v=0,lty=2)
-# main
-mtext("AMCE",font=2,line=1)
 # axes
 axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.8)
 axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.8)
@@ -151,7 +149,7 @@ axis(4,at=c(50,seq(from=nrow(plotdata),to=1)[-napos])
      ,labels=c("NA",plotdata$nice_names[-napos])
      ,las=1,lwd=0,line=-.3,cex.axis=.7)
 # label
-mtext(side=1,"Change: Pr(Vote)",outer=F,line=1.7)
+mtext(side=1,"Average Marginal Component Effect",outer=F,line=1.7)
 dev.off()
 
 
@@ -205,13 +203,13 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_conference2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_conference2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
-polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+polygon(x=c(.5,10,10,.5),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
 # add white lines
-abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+abline(v=c(0.5,1.5,2.5,3.5,4.5),col="white",lwd=13)
 # points & lines
 for(i in as.numeric(unique(dist_by_conference$dist))){
   points(x=i-.1
@@ -246,7 +244,7 @@ for(i in as.numeric(unique(dist_by_conference$dist))){
                                        & as.numeric(dist_by_conference$dist)==i]))
 }
 # main
-mtext("Behavior at Party Congress",font=2,line=.5)
+#mtext("Behavior at Party Congress",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
@@ -288,13 +286,13 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_parliament2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
-polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+polygon(x=c(.5,10,10,.5),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
 # add white lines
-abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+abline(v=c(0.5,1.5,2.5,3.5,4.5),col="white",lwd=13)
 # points & lines
 for(i in as.numeric(unique(dist_by_parliament$dist))){
   points(x=i-.1
@@ -319,7 +317,7 @@ for(i in as.numeric(unique(dist_by_parliament$dist))){
                                        & as.numeric(dist_by_parliament$dist)==i]))
 }
 # main
-mtext("Voting Behavior in Parliament",font=2,line=.5)
+#mtext("Voting Behavior in Parliament",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
@@ -393,13 +391,13 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_critique2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_critique2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
-polygon(x=c(-10,10,10,-10),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
+polygon(x=c(.5,10,10,.5),y=c(-20,-20,70,70),border=F,col=alpha("gray",alpha=.15))
 # add white lines
-abline(v=c(1.5,2.5,3.5,4.5),col="white",lwd=2)
+abline(v=c(0.5,1.5,2.5,3.5,4.5),col="white",lwd=13)
 # points & lines
 for(i in as.numeric(unique(dist_by_critique$dist))){
   # rank and file
@@ -449,16 +447,17 @@ for(i in as.numeric(unique(dist_by_critique$dist))){
   
 }
 # main
-mtext("Intra-Party Critique",font=2,line=.5)
+#mtext("Intra-Party Critique",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
 mtext("Predicted Vote Share vs. Baseline",side=2,line=2)
 mtext("Ideological Distance",side=1,line=2)
 # legend
-legend("topright",pch=c(20,4,17,18),legend=c("Rank-and-file","None","Former Leader","Faction")
+legend("topright",pch=c(20,4,17,18),legend=c("Rank-and-File","None","Former Leader","Faction")
        ,cex=.8,bg="white")
 dev.off()
+
 
 
 ###############################################
@@ -546,35 +545,36 @@ dev.off()
 #png(file=paste0(getwd(),"/figures/competitionplot2.png"), width=400, height=100)
 pdf(file=paste0(getwd(),"/figures/competitionplot2.pdf"), width=7, height=2)
 par(mar=c(0,0,0,0),mar=c(0,.5,0,.5))
-plot(0,xlim=c(0,1),ylim=c(-4.5,2),type="n",axes=F,ann=F)
+plot(0,xlim=c(0,1),ylim=c(-4.5,1.2),type="n",axes=F,ann=F)
 # 1 vs. 2a
-polygon(x=c(-.002,1.002,1.002,-.002),y=c(0,0,1,1),border=F
+polygon(x=c(-.002,1.002,1.002,-.002),y=c(0,0,.5,.5),border=F
         ,col=alpha("gray",alpha=.3))
-text(x=.05,y=1.8,"Party 1",cex=.9,font=2)
-text(x=.95,y=1.8,"Party 2a",cex=.9,font=2)
-for(i in seq(0,1,by=.2)){
-  lines(x=c(i,i),y=c(1,0),lwd=.5)
+text(x=.05,y=1.1,"Party 1",cex=.9,font=2)
+text(x=.95,y=1.1,"Party 2a",cex=.9,font=2)
+for(i in c(0,.25,.5,.75,1)){
+  lines(x=c(i,i),y=c(.5,0),lwd=.7,lty=3)
+  text(x=i,y=-.4,paste0(i*100,":",100-i*100),cex=.7)
 }
 polygon(x=c(1-predprob$CI1[1],1-predprob$CI2[1]
             ,1-predprob$CI2[1],1-predprob$CI1[1])
-        ,y=c(-.2,-.2,1.2,1.2),col=alpha("gray",alpha=.8),border=F)
-lines(x=c(1-predprob$prob[1],1-predprob$prob[1]),y=c(1.5,-.5),lwd=2)
-text(x=.05,y=-.5,paste0("(",round(predprob$prob[1],2),"%)"),cex=.8)
-text(x=.95,y=-.5,paste0("(",1-round(predprob$prob[1],2),"%)"),cex=.8)
+        ,y=c(-.05,-.05,.55,.55),col=alpha("gray",alpha=1),border=F)
+lines(x=c(1-predprob$prob[1],1-predprob$prob[1]),y=c(.6,-.1),lwd=1)
+text(x=1-predprob$prob[1],y=.9,paste(round(1-predprob$prob[1],2)*100
+                                      ,":",round(predprob$prob[1],2)*100),cex=.8)
 # 1 vs. 2b
-polygon(x=c(-.002,1.002,1.002,-.002),y=c(-4,-4,-3,-3),border=F
+polygon(x=c(-.002,1.002,1.002,-.002),y=c(-4,-4,-3.5,-3.5),border=F
         ,col=alpha("gray",alpha=.3))
-text(x=.05,y=-2.2,"Party 1",cex=.9,font=2)
-text(x=.95,y=-2.2,"Party 2b",cex=.9,font=2)
-for(i in seq(0,1,by=.2)){
-  lines(x=c(i,i),y=c(-4,-3),lwd=.5)
+text(x=.05,y=-2.9,"Party 1",cex=.9,font=2)
+text(x=.95,y=-2.9,"Party 2b",cex=.9,font=2)
+for(i in c(0,.25,.5,.75,1)){
+  lines(x=c(i,i),y=c(-4,-3.5),lwd=.7,lty=3)
+  text(x=i,y=-4.4,paste0(i*100,":",100-i*100),cex=.7)
 }
 polygon(x=c(1-predprob$CI1[2],1-predprob$CI2[2]
             ,1-predprob$CI2[2],1-predprob$CI1[2])
-        ,y=c(-4.2,-4.2,-2.8,-2.8),col=alpha("gray",alpha=.8),border=F)
-lines(x=c(1-predprob$prob[2],1-predprob$prob[2]),y=c(-4.5,-2.5),lwd=2)
-text(x=.05,y=-4.5,paste0("(",round(predprob$prob[2],2),"%)"),cex=.8)
-text(x=.95,y=-4.5,paste0("(",1-round(predprob$prob[2],2),"%)"),cex=.8)
-# vertical line
-abline(v=.5,lty=2)
+        ,y=c(-4.05,-4.05,-3.45,-3.45),col=alpha("gray",alpha=1),border=F)
+lines(x=c(1-predprob$prob[2],1-predprob$prob[2]),y=c(-4.1,-3.4),lwd=1)
+text(x=1-predprob$prob[2],y=-3.1,paste(round(1-predprob$prob[2],2)*100
+                                       ,":",round(predprob$prob[2],2)*100),cex=.8)
 dev.off()
+
