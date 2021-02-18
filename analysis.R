@@ -11,8 +11,8 @@ library(tidyverse)
 rm(list=ls())
 
 # load data from Stata where reshaping and some recoding is done (in data_preparation_for_R.do)
-dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
-#dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+#dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
+dat <- as.data.table(read_dta(file="/Volumes/sfb884c/C2/research/GIP_vote_experiment/data/reshaped_experiment_data.dta"))
 
 # label factors correctly
 dat$role <- factor(dat$role, levels=2:4,
@@ -150,8 +150,8 @@ compute_scenarios <- function(model) {
     
     
     
-    # find mean probability and CIs for plotting
-    scenarios$prob <- apply(probs, 1, mean)*100
+    # find median probability and CIs for plotting
+    scenarios$prob <- apply(probs, 1, median)*100
     scenarios$upper <- apply(probs, 1, quantile, p=.975)*100
     scenarios$lower <- apply(probs, 1, quantile, p=.025)*100
     
@@ -200,7 +200,7 @@ compute_scenarios_linpred <- function(model){
     linpred <- scenarios.expanded%*%t(betas)
     
     # summarize
-    scenarios$mean <- apply(linpred, 1, mean)
+    scenarios$median <- apply(linpred, 1, median)
     scenarios$upper <- apply(linpred, 1, quantile, p=.975)
     scenarios$lower <- apply(linpred, 1, quantile, p=.025)
     
