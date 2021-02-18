@@ -479,7 +479,7 @@ cases1_2a <- rbind(linpreds[role == "opposition party" &
                           age == "38y" &
                           job == "employee" &
                           dist == 0
-                        ,c("mean", "upper", "lower")],
+                        ,c("median", "upper", "lower")],
                linpreds[role == "opposition party" &
                           conference == "divided" &
                           parliament == "divided" &
@@ -489,7 +489,7 @@ cases1_2a <- rbind(linpreds[role == "opposition party" &
                           age == "38y" &
                           job == "employee" &
                           dist == 1
-                        ,c("mean", "upper", "lower")]
+                        ,c("median", "upper", "lower")]
 )
 
 cases1_2b <- rbind(linpreds[role == "opposition party" &
@@ -501,7 +501,7 @@ cases1_2b <- rbind(linpreds[role == "opposition party" &
                               age == "38y" &
                               job == "employee" &
                               dist == 0
-                            ,c("mean", "upper", "lower")],
+                            ,c("median", "upper", "lower")],
                    linpreds[role == "opposition party" &
                               conference == "united" &
                               parliament == "united" &
@@ -511,7 +511,7 @@ cases1_2b <- rbind(linpreds[role == "opposition party" &
                               age == "38y" &
                               job == "employee" &
                               dist == 1
-                            ,c("mean", "upper", "lower")]
+                            ,c("median", "upper", "lower")]
 )
 
 predprob1_2a <- as.data.frame(apply(cases1_2a,2,compute_probs_one_vs_second))
