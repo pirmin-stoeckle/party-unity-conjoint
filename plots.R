@@ -556,14 +556,14 @@ text(x=.05,y=1.1,"Party 1",cex=.9,font=2)
 text(x=.95,y=1.1,"Party 2a",cex=.9,font=2)
 for(i in c(0,.25,.5,.75,1)){
   lines(x=c(i,i),y=c(.5,0),lwd=.7,lty=3)
-  text(x=i,y=-.4,paste0(i*100,":",100-i*100),cex=.7)
+  text(x=i,y=-.4,paste0(100-i*100,":",i*100),cex=.7)
 }
 polygon(x=c(1-predprob$CI1[1],1-predprob$CI2[1]
             ,1-predprob$CI2[1],1-predprob$CI1[1])
         ,y=c(-.05,-.05,.55,.55),col=alpha("gray",alpha=1),border=F)
 lines(x=c(1-predprob$prob[1],1-predprob$prob[1]),y=c(.6,-.1),lwd=1)
-text(x=1-predprob$prob[1],y=.9,paste(round(1-predprob$prob[1],2)*100
-                                      ,":",round(predprob$prob[1],2)*100),cex=.8)
+text(x=1-predprob$prob[1],y=.9,paste(round(predprob$prob[1],2)*100
+                                      ,":",round(1-predprob$prob[1],2)*100),cex=.8)
 # 1 vs. 2b
 polygon(x=c(-.002,1.002,1.002,-.002),y=c(-4,-4,-3.5,-3.5),border=F
         ,col=alpha("gray",alpha=.3))
@@ -571,13 +571,13 @@ text(x=.05,y=-2.9,"Party 1",cex=.9,font=2)
 text(x=.95,y=-2.9,"Party 2b",cex=.9,font=2)
 for(i in c(0,.25,.5,.75,1)){
   lines(x=c(i,i),y=c(-4,-3.5),lwd=.7,lty=3)
-  text(x=i,y=-4.4,paste0(i*100,":",100-i*100),cex=.7)
+  text(x=i,y=-4.4,paste0(100-i*100,":",i*100),cex=.7)
 }
 polygon(x=c(1-predprob$CI1[2],1-predprob$CI2[2]
             ,1-predprob$CI2[2],1-predprob$CI1[2])
         ,y=c(-4.05,-4.05,-3.45,-3.45),col=alpha("gray",alpha=1),border=F)
 lines(x=c(1-predprob$prob[2],1-predprob$prob[2]),y=c(-4.1,-3.4),lwd=1)
-text(x=1-predprob$prob[2],y=-3.1,paste(round(1-predprob$prob[2],2)*100
-                                       ,":",round(predprob$prob[2],2)*100),cex=.8)
+text(x=1-predprob$prob[2],y=-3.1,paste(round(predprob$prob[2],2)*100
+                                       ,":",round(1-predprob$prob[2],2)*100),cex=.8)
 dev.off()
 
