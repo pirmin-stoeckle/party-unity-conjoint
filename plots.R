@@ -203,7 +203,7 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_conference2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_conference2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,0,0))
+par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -286,7 +286,7 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_parliament2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,0,0))
+par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -391,7 +391,7 @@ dev.off()
 # ALTERNATIVE PLOT
 #png(file=paste0(getwd(),"/figures/distplot_critique2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_critique2.pdf"),width=7, height=3)
-par(oma=c(0,0,0,0),mar=c(3,3,0,0))
+par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -470,20 +470,20 @@ compute_probs_one_vs_second <- function(x) {
   return(c(prob.first, 1-prob.first))
 }
 
-cases1_2a <- rbind(linpreds[role == "government party (not PM party)" &
+cases1_2a <- rbind(linpreds[role == "opposition party" &
                           conference == "divided" &
                           parliament == "divided" &
                           critique == "former party leader" &
                           reform == "low" &
-                          gender == "male" &
-                          age == "56y" &
-                          job == "lawyer" &
+                          gender == "female" &
+                          age == "38y" &
+                          job == "employee" &
                           dist == 0
                         ,c("mean", "upper", "lower")],
                linpreds[role == "opposition party" &
                           conference == "divided" &
                           parliament == "divided" &
-                          critique == "party faction" &
+                          critique == "former party leader" &
                           reform == "low" &
                           gender == "female" &
                           age == "38y" &
@@ -492,14 +492,14 @@ cases1_2a <- rbind(linpreds[role == "government party (not PM party)" &
                         ,c("mean", "upper", "lower")]
 )
 
-cases1_2b <- rbind(linpreds[role == "government party (not PM party)" &
+cases1_2b <- rbind(linpreds[role == "opposition party" &
                               conference == "divided" &
                               parliament == "divided" &
                               critique == "former party leader" &
                               reform == "low" &
-                              gender == "male" &
-                              age == "56y" &
-                              job == "lawyer" &
+                              gender == "female" &
+                              age == "38y" &
+                              job == "employee" &
                               dist == 0
                             ,c("mean", "upper", "lower")],
                    linpreds[role == "opposition party" &
@@ -521,6 +521,9 @@ predprob1_2b <- as.data.frame(apply(cases1_2b,2,compute_probs_one_vs_second))
 colnames(predprob1_2b) <- c("prob","CI1","CI2")
 
 predprob <- rbind(predprob1_2a[1,], predprob1_2b[1,])
+
+abs(predprob$prob[1]-predprob[1,2:3])
+abs(predprob$prob[2]-predprob[2,2:3])
 
 
 # plot
