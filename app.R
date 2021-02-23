@@ -102,7 +102,7 @@ server <- function(input, output) {
                               age == input$age_1 &
                               job == input$job_1 &
                               dist == input$dist_1
-                            ,c("mean", "upper", "lower")],
+                            ,c("median", "upper", "lower")],
                    linpreds[role == input$role_2 &
                               conference == input$conference_2 &
                               parliament == input$parliament_2 &
@@ -112,7 +112,7 @@ server <- function(input, output) {
                               age == input$age_2 &
                               job == input$job_2 &
                               dist == input$dist_2
-                            ,c("mean", "upper", "lower")]
+                            ,c("median", "upper", "lower")]
     )
   })
   
