@@ -33,38 +33,30 @@ ui <- fluidPage(
         column(width = 6, h3("Party 1"),
                div(
                  id = "scenario_1",
-                 h4("Candidate Characteristics:"),
-                 selectInput('gender_1', 'Gender', choices = levels(linpreds$gender)),
-                 selectInput('age_1', 'Age', choices = levels(linpreds$age)),
-                 selectInput('job_1', 'Occupation', choices = levels(linpreds$job)),
-                 h4("Intra-Party Behavior"),    
-                 selectInput('conference_1', 'Behavior at party conference', choices = levels(linpreds$conference)),
-                 selectInput('parliament_1', 'Voting behavior in parliament', choices = levels(linpreds$parliament)),
-                 selectInput('critique_1', 'Intra-party critique', choices = levels(linpreds$critique)),
-                 selectInput('reform_1', 'Clarity of reform proposals', choices = levels(linpreds$reform)),
-                 h4("Party Position"), 
                  selectInput('dist_1', 'Ideological distance', choices = levels(linpreds$dist)),
-                 h4("Party's Characteristic"), 
+                 selectInput('critique_1', 'Intra-Party Critique', choices = levels(linpreds$critique)),
+                 selectInput('parliament_1', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
+                 selectInput('conference_1', 'Behavior at Congress', choices = levels(linpreds$conference)),
+                 selectInput('reform_1', 'Reform Clarity', choices = levels(linpreds$reform)),
                  selectInput('role_1', 'Party role', choices = levels(linpreds$role)),
+                 selectInput('gender_1', 'Gender of Candidate', choices = levels(linpreds$gender)),
+                 selectInput('age_1', 'Age of Candidate', choices = levels(linpreds$age)),
+                 selectInput('job_1', "Candidate's Occupation", choices = levels(linpreds$job)),
                  actionButton("reset_1", "Reset")
                )
         ),
         column(width = 6, h3("Party 2"),
                div(
                  id = "scenario_2",
-                 h4("Candidate Characteristics"),
-                 selectInput('gender_2', 'Gender', choices = levels(linpreds$gender)),
-                 selectInput('age_2', 'Age', choices = levels(linpreds$age)),
-                 selectInput('job_2', 'Occupation', choices = levels(linpreds$job)),
-                 h4("Intra-Party Behavior"),    
-                 selectInput('conference_2', 'Behavior at party conference', choices = levels(linpreds$conference)),
-                 selectInput('parliament_2', 'Voting behavior in parliament', choices = levels(linpreds$parliament)),
-                 selectInput('critique_2', 'Intra-party critique', choices = levels(linpreds$critique)),
-                 selectInput('reform_2', 'Clarity of reform proposals', choices = levels(linpreds$reform)),
-                 h4("Party Position"), 
                  selectInput('dist_2', 'Ideological distance', choices = levels(linpreds$dist)),
-                 h4("Party's Characteristic"), 
+                 selectInput('critique_2', 'Intra-Party Critique', choices = levels(linpreds$critique)),
+                 selectInput('parliament_2', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
+                 selectInput('conference_2', 'Behavior at Congress', choices = levels(linpreds$conference)),
+                 selectInput('reform_2', 'Reform Clarity', choices = levels(linpreds$reform)),
                  selectInput('role_2', 'Party role', choices = levels(linpreds$role)),
+                 selectInput('gender_2', 'Gender of Candidate', choices = levels(linpreds$gender)),
+                 selectInput('age_2', 'Age of Candidate', choices = levels(linpreds$age)),
+                 selectInput('job_2', "Candidate's Occupation", choices = levels(linpreds$job)),
                  actionButton("reset_2", "Reset")
                )
        )
@@ -73,8 +65,7 @@ ui <- fluidPage(
  mainPanel(width = 5,
    fluidRow(
      tabsetPanel(type = "tabs",
-       tabPanel("Plot 1", plotOutput("plot"), tableOutput("table")),
-       tabPanel("Plot 2", plotOutput("plot2"))
+       tabPanel("Plot", plotOutput("plot"))
        )
    )
   )
@@ -102,7 +93,7 @@ server <- function(input, output) {
                               age == input$age_1 &
                               job == input$job_1 &
                               dist == input$dist_1
-                            ,c("mean", "upper", "lower")],
+                            ,c("median", "upper", "lower")],
                    linpreds[role == input$role_2 &
                               conference == input$conference_2 &
                               parliament == input$parliament_2 &
@@ -112,46 +103,12 @@ server <- function(input, output) {
                               age == input$age_2 &
                               job == input$job_2 &
                               dist == input$dist_2
-                            ,c("mean", "upper", "lower")]
+                            ,c("median", "upper", "lower")]
     )
   })
   
-  
-  # define output plot
+  # define  output plot
   output$plot <- renderPlot({
-    # add a warning if a the combination of attributes is restricted
-    validate(
-      need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
-    )
-    # transform linear predictions into probabilities in 1:1 competition
-    predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
-    colnames(predprob) <- c("prob","CI1","CI2")
-    
-     ggplot(predprob, aes(x = factor(c(1, 2)), y = prob)) +
-       geom_pointrange(aes(ymin = CI1, ymax = CI2)) +
-       ylim(c(0, 1)) +
-       ylab("Predicted Vote Probabilities") +
-       xlab("Candidate") +
-       geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
-       theme_bw()
-  })
-  
-  # define output table
-  output$table <- renderTable({
-    # warning
-    validate(
-      need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
-    )
-
-    predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second)*100)
-    colnames(predprob) <- c("prob","CI1","CI2")
-      
-    data.frame(Party=factor(c(1,2)), Prob=predprob$prob
-                 ,lowerCI=predprob$CI1, upperCI=predprob$CI2)
-    })
-  
-  # define second output plot
-  output$plot2 <- renderPlot({
     # warning
     validate(
       need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
@@ -161,19 +118,23 @@ server <- function(input, output) {
     colnames(predprob) <- c("prob","CI1","CI2")
     
     # plot
-    par(mar=c(0,0,0,0))
-    plot(0,xlim=c(0,1),ylim=c(-9,10),type="n",axes=F,ann=F)
-    polygon(x=c(-.002,.5,.5,-.002),y=c(0,0,1,1),col=rgb(0,0,1,alpha=.3),border=F)
-    polygon(x=c(.5,1.002,1.002,.5),y=c(0,0,1,1),col=rgb(0,1,0,alpha=.3),border=F)
-    text(x=.1,y=2.5,"Party 1",cex=.9,font=2)
-    text(x=.9,y=2.5,"Party 2",cex=.9,font=2)
-    for(i in seq(0,1,by=.2)){
-      lines(x=c(i,i),y=c(1,0),lwd=.5)
+    par(mar=c(0,0,0,0),mar=c(0,.5,0,.5))
+    plot(0,xlim=c(0,1),ylim=c(-4.5,1.2),type="n",axes=F,ann=F)
+    # 1 vs. 2a
+    polygon(x=c(-.002,1.002,1.002,-.002),y=c(0,0,.5,.5),border=F
+            ,col=alpha("gray",alpha=.3))
+    text(x=.05,y=1.1,"Party 1",cex=1,font=2)
+    text(x=.95,y=1.1,"Party 2",cex=1,font=2)
+    for(i in c(0,.25,.5,.75,1)){
+      lines(x=c(i,i),y=c(.5,0),lwd=.7,lty=3)
+      text(x=i,y=-.4,paste0(100-i*100,":",i*100),cex=1)
     }
-    lines(x=c(predprob$prob[2],predprob$prob[2]),y=c(1.5,-.5),lwd=2)
-    polygon(x=c(predprob$CI1[2],predprob$CI2[2]
-                ,predprob$CI2[2],predprob$CI1[2])
-            ,y=c(-.2,-.2,1.2,1.2),col=rgb(0,0,0,alpha=.3),border=F)
+    polygon(x=c(1-predprob$CI1[1],1-predprob$CI2[1]
+                ,1-predprob$CI2[1],1-predprob$CI1[1])
+            ,y=c(-.05,-.05,.55,.55),col=alpha("gray",alpha=1),border=F)
+    lines(x=c(1-predprob$prob[1],1-predprob$prob[1]),y=c(.6,-.1),lwd=1)
+    text(x=1-predprob$prob[1],y=.9,paste(round(predprob$prob[1],2)*100
+                                         ,":",round(1-predprob$prob[1],2)*100),cex=1)
   })
   
 }
