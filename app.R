@@ -18,58 +18,53 @@ compute_probs_one_vs_second <- function(x) {
 }
 
 # user interface
-ui <- fluidPage(
-  useShinyjs(),
-  
-  titlePanel("Party Vote Choice Experiment - Simulation Tool"),
-  
-  theme = shinytheme("flatly"),
-  
-  sidebarLayout(
-    sidebarPanel(width = 5,
-     fluidRow(
-       HTML("This App is a companion to the paper 'Assessing the relative influence of party unity on vote choice: Evidence from a conjoint experiment'. <br>
-             Below you can choose attributes of a ficitional electoral race between two parties. <br>"),
-        column(width = 6, h3("Party 1"),
-               div(
-                 id = "scenario_1",
-                 selectInput('dist_1', 'Ideological distance', choices = levels(linpreds$dist)),
-                 selectInput('critique_1', 'Intra-Party Critique', choices = levels(linpreds$critique)),
-                 selectInput('parliament_1', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
-                 selectInput('conference_1', 'Behavior at Congress', choices = levels(linpreds$conference)),
-                 selectInput('reform_1', 'Reform Clarity', choices = levels(linpreds$reform)),
-                 selectInput('role_1', 'Party role', choices = levels(linpreds$role)),
-                 selectInput('gender_1', 'Gender of Candidate', choices = levels(linpreds$gender)),
-                 selectInput('age_1', 'Age of Candidate', choices = levels(linpreds$age)),
-                 selectInput('job_1', "Candidate's Occupation", choices = levels(linpreds$job)),
-                 actionButton("reset_1", "Reset")
-               )
-        ),
-        column(width = 6, h3("Party 2"),
-               div(
-                 id = "scenario_2",
-                 selectInput('dist_2', 'Ideological distance', choices = levels(linpreds$dist)),
-                 selectInput('critique_2', 'Intra-Party Critique', choices = levels(linpreds$critique)),
-                 selectInput('parliament_2', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
-                 selectInput('conference_2', 'Behavior at Congress', choices = levels(linpreds$conference)),
-                 selectInput('reform_2', 'Reform Clarity', choices = levels(linpreds$reform)),
-                 selectInput('role_2', 'Party role', choices = levels(linpreds$role)),
-                 selectInput('gender_2', 'Gender of Candidate', choices = levels(linpreds$gender)),
-                 selectInput('age_2', 'Age of Candidate', choices = levels(linpreds$age)),
-                 selectInput('job_2', "Candidate's Occupation", choices = levels(linpreds$job)),
-                 actionButton("reset_2", "Reset")
-               )
-       )
-   )),
-
- mainPanel(width = 5,
-   fluidRow(
-     tabsetPanel(type = "tabs",
-       tabPanel("Plot", plotOutput("plot"))
-       )
-   )
-  )
-))
+ui <- navbarPage("Party Unity",
+                 tabPanel("Simulation Tool",
+                          sidebarLayout(
+                            sidebarPanel(width = 5,
+                                         fluidRow(
+                                           HTML("Please choose attributes of a ficitional electoral race between two parties. <br>"),
+                                           column(width = 6, h3("Party 1"),
+                                                  div(
+                                                    id = "scenario_1",
+                                                    selectInput('dist_1', 'Ideological distance', choices = levels(linpreds$dist)),
+                                                    selectInput('critique_1', 'Intra-Party Critique', choices = levels(linpreds$critique)),
+                                                    selectInput('parliament_1', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
+                                                    selectInput('conference_1', 'Behavior at Congress', choices = levels(linpreds$conference)),
+                                                    selectInput('reform_1', 'Reform Clarity', choices = levels(linpreds$reform)),
+                                                    selectInput('role_1', 'Party role', choices = levels(linpreds$role)),
+                                                    selectInput('gender_1', 'Gender of Candidate', choices = levels(linpreds$gender)),
+                                                    selectInput('age_1', 'Age of Candidate', choices = levels(linpreds$age)),
+                                                    selectInput('job_1', "Candidate's Occupation", choices = levels(linpreds$job)),
+                                                    actionButton("reset_1", "Reset")
+                                                  )
+                                           ),
+                                           column(width = 6, h3("Party 2"),
+                                                  div(
+                                                    id = "scenario_2",
+                                                    selectInput('dist_2', 'Ideological distance', choices = levels(linpreds$dist)),
+                                                    selectInput('critique_2', 'Intra-Party Critique', choices = levels(linpreds$critique)),
+                                                    selectInput('parliament_2', 'Parliamentary Voting Behavior', choices = levels(linpreds$parliament)),
+                                                    selectInput('conference_2', 'Behavior at Congress', choices = levels(linpreds$conference)),
+                                                    selectInput('reform_2', 'Reform Clarity', choices = levels(linpreds$reform)),
+                                                    selectInput('role_2', 'Party role', choices = levels(linpreds$role)),
+                                                    selectInput('gender_2', 'Gender of Candidate', choices = levels(linpreds$gender)),
+                                                    selectInput('age_2', 'Age of Candidate', choices = levels(linpreds$age)),
+                                                    selectInput('job_2', "Candidate's Occupation", choices = levels(linpreds$job)),
+                                                    actionButton("reset_2", "Reset")
+                                                  )
+                                           )
+                                         )
+                            ),
+                            mainPanel(width = 5,
+                                      h3("Expected probabilities"),
+                                      plotOutput("plot"),
+                                      textOutput("result"))
+                          )
+                 ),
+                 tabPanel("AMCE"),
+                 tabPanel("About", includeMarkdown("README.md"))
+)
 
 # server function
 server <- function(input, output) {
@@ -82,33 +77,34 @@ server <- function(input, output) {
     reset("scenario_2")
   })
   
-  # compute cases within reactive expression (good practive because inputs are handled lazily and cached)
+  # compute cases within reactive expression (good practice because inputs are handled lazily and cached)
   rv_cases <- reactive({
     rbind(linpreds[role == input$role_1 &
-                              conference == input$conference_1 &
-                              parliament == input$parliament_1 &
-                              critique == input$critique_1 &
-                              reform == input$reform_1 &
-                              gender == input$gender_1 &
-                              age == input$age_1 &
-                              job == input$job_1 &
-                              dist == input$dist_1
-                            ,c("median", "upper", "lower")],
-                   linpreds[role == input$role_2 &
-                              conference == input$conference_2 &
-                              parliament == input$parliament_2 &
-                              critique == input$critique_2 &
-                              reform == input$reform_2 &
-                              gender == input$gender_2 &
-                              age == input$age_2 &
-                              job == input$job_2 &
-                              dist == input$dist_2
-                            ,c("median", "upper", "lower")]
+                   conference == input$conference_1 &
+                   parliament == input$parliament_1 &
+                   critique == input$critique_1 &
+                   reform == input$reform_1 &
+                   gender == input$gender_1 &
+                   age == input$age_1 &
+                   job == input$job_1 &
+                   dist == input$dist_1,
+                   c("median", "upper", "lower")],
+          linpreds[role == input$role_2 &
+                   conference == input$conference_2 &
+                   parliament == input$parliament_2 &
+                   critique == input$critique_2 &
+                   reform == input$reform_2 &
+                   gender == input$gender_2 &
+                   age == input$age_2 &
+                   job == input$job_2 &
+                   dist == input$dist_2,
+                   c("median", "upper", "lower")]
     )
   })
-  
+
   # define  output plot
   output$plot <- renderPlot({
+    
     # warning
     validate(
       need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
@@ -137,6 +133,17 @@ server <- function(input, output) {
                                          ,":",round(1-predprob$prob[1],2)*100),cex=1)
   })
   
+  output$result <- renderText({
+    
+    # warning
+    validate(
+      need(nrow(rv_cases()) == 2, 'Invalid combination of attributes.')
+    )
+    
+    predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
+    colnames(predprob) <- c("prob","CI1","CI2")
+    paste("The plot above shows the expected result from the simulated competition. In the specified case, party 1 gets elected with a probability of", round(predprob $prob[1] * 100, 0), "%.")
+  })
 }
 
 
