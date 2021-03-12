@@ -681,4 +681,35 @@ lrtest(mlogit1, mlogit3) # conditional model is better
 
 
 
+##############
+# Table Output
+##############
 
+library(stargazer)
+
+stargazer(model, model_clogit_correct_ratings,
+          order = c(18,19,20,21,13,11,12,14,15,16,17,10,9,1,2,3,7,5,6,8,4), # better change in model formula
+          covariate.labels = c("Dist: 1",
+                               "Dist: 2",
+                               "Dist: 3",
+                               "Dist: 4",
+                               "Critique: None",
+                               "Critique: Former party leader",
+                               "Critique: Party faction",
+                               "Parliamentary voting: Divided",
+                               "Behavior at congress: Neither nor",
+                               "Behavior at congress: Divided",
+                               "Reform clarity: Low",
+                               "Party role: PM party",
+                               "Party role: Opposition party",
+                               "Candidate gender: Male",
+                               "Candidate age: 56 years",
+                               "Candidate age: 74 years",
+                               "Candidate occupation: Entrepreneur",
+                               "Candidate occupation: Lawyer",
+                               "Candidate occupation: Politician",
+                               "Candidate occupation: Employee (retired)",
+                               "Candidate occupation: Activist"),
+          style = "ajps",
+          star.cutoffs = c(0.05, 0.01, 0.001),
+          font.size = "small")
