@@ -713,3 +713,64 @@ stargazer(model, model_clogit_correct_ratings,
           style = "ajps",
           star.cutoffs = c(0.05, 0.01, 0.001),
           font.size = "small")
+
+
+######################################################################
+# no carry-over effects (i.e. results are the same when only looking at the first choice screen)
+######################################################################
+
+dat_first_screen <- dat[screen == 1 ,]
+length(dat_first_screen$chosen)
+# sample size (observations) of 6768
+length(unique(dat_first_screen$id_g))
+# sample size (respondents) of 3394
+
+model_clogit_first_screen <- clogit(chosen~
+                                      gender
+                                    +age
+                                    +job
+                                    +role
+                                    +critique
+                                    +parliament
+                                    +conference
+                                    +reform
+                                    +dist
+                                    +strata(id_screen)
+                                    +cluster(id_g)
+                                    ,data=dat_first_screen, method="efron", robust=TRUE)
+
+summary(model_clogit_first_screen)
+
+# custom function to get data for AMCE plot in consistent format
+compute_amce_clogit_first_screen <- function(model) {
+  coefs <- coef(model) #get coefficients 
+  ses <- summary(model)$coefficients[,4] #get ROBUST ses
+  names <- rownames(summary(model)$coefficients) #get names of coefs
+  pdata <- data.table(amce=(1/(1+exp(-coefs)))-.5, #compute probability difference to all 0's scenario
+                      lower=(1/(1+exp(-(coefs-(1.96*ses)))))-.5, #compute corresponding CI
+                      upper=(1/(1+exp(-(coefs+(1.96*ses)))))-.5, #compute corresponding CI
+                      names=names,
+                      coefs = coefs, 
+                      ses = ses,
+                      specification = "clogit_first_screen"
+  )
+  return(pdata)
+}
+
+pdata_clogit_first_screen <- compute_amce_clogit_first_screen(model = model_clogit_first_screen)
+
+pdata$specification <- "clogit_all"
+names(pdata)[1] <- "amce"
+pdata_robustness_first_screen <- rbind(pdata, pdata_clogit_first_screen, fill = TRUE)
+
+
+# plot
+amceplot_robustness_first_screen <- ggplot(pdata_robustness_first_screen, aes(x = amce, y = names, shape = specification)) + 
+  geom_pointrange(aes(xmin = lower, xmax = upper), 
+                  size = 0.25,
+                  position = position_dodge(width = 0.5))+
+  geom_vline(xintercept = 0, linetype = 3) +
+  xlab("Change: Pr(Vote for the respective candidate)") +
+  ylab("")
+
+amceplot_robustness_first_screen
