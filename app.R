@@ -62,7 +62,7 @@ ui <- navbarPage("Party Unity",
                                       textOutput("result"))
                           )
                  ),
-                 tabPanel("AMCE"),
+                 # tabPanel("AMCE"),
                  tabPanel("About", includeMarkdown("README.md"))
 )
 
@@ -142,7 +142,10 @@ server <- function(input, output) {
     
     predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
     colnames(predprob) <- c("prob","CI1","CI2")
-    paste("The plot above shows the expected result from the simulated competition. In the specified case, party 1 gets elected with a probability of", round(predprob $prob[1] * 100, 0), "%.")
+    paste0("The plot above shows the expected result from the simulated competition. In the specified case, party 1 gets elected with a probability of ", 
+          round(predprob$prob[1] * 100, 1), "% [", 
+          round(predprob$CI1[1] * 100, 1), "; ",
+          round(predprob$CI2[1] * 100, 1), "].")
   })
 }
 
