@@ -16,38 +16,38 @@ dat <- as.data.table(read_dta(file="//nas.uni-mannheim.de/sfb884/sfb884c/C2/rese
 
 # label factors correctly
 dat$role <- factor(dat$role, levels=2:4,
-                    labels=c("opposition party",
-                             "PM party", "government party (not PM party)"))
+                    labels=c("Opposition party",
+                             "PM party", "Junior coalition partner"))
 dat$conference <- factor(dat$conference, levels=1:3,
-                    labels=c("united", "neither united nor divided", "divided"))
+                    labels=c("United", "Neither united nor divided", "Divided"))
 dat$parliament <- factor(dat$parliament, levels=2:3,
-                    labels=c("united", "divided"))
+                    labels=c("United voting", "Divided voting"))
 dat$critique <- factor(dat$critique, levels=1:4,
-                    labels=c("rank-and-file members", "former party leader", "party faction", "none"))
+                    labels=c("Rank-and-file members", "Former party leader", "Party faction", "None"))
 dat$reform <- factor(dat$reform, levels=1:2,
-                     labels=c("high", "low"))
+                     labels=c("High", "Low"))
 dat$gender <- factor(dat$gender, levels=1:2,
-                     labels=c("male", "female"))
+                     labels=c("Male", "Female"))
 dat$age <- factor(dat$age, levels=1:3,
-                     labels=c("38y", "56y", "74y"))
+                     labels=c("38 years", "56 years", "74 years"))
 dat$job <- factor(dat$job, levels=1:6,
-                  labels=c("activist", "employee", "lawyer", "politician",
-                           "entrepreneur", "employee (retired)"))
+                  labels=c("Activist", "Employee", "Lawyer", "Politician",
+                           "Entrepreneur", "Employee (retired)"))
 dat$dist <- factor(dat$dist, levels=0:4)
 
 #set baseline scenario (corresponding to the highest preference, as identified in the model)
        # personal characteristics
-       dat$gender <- relevel(dat$gender, ref="female")
-       dat$age <- relevel(dat$age, ref="38y")
-       dat$job <- relevel(dat$job, ref="employee")
+       dat$gender <- relevel(dat$gender, ref="Female")
+       dat$age <- relevel(dat$age, ref="38 years")
+       dat$job <- relevel(dat$job, ref="Employee")
        # party status
-       dat$role <- relevel(dat$role, ref="government party (not PM party)")
+       dat$role <- relevel(dat$role, ref="Junior coalition partner")
        # party unity
-       dat$critique <- relevel(dat$critique, ref="rank-and-file members")
-       dat$parliament <- relevel(dat$parliament, ref="united")
-       dat$conference <- relevel(dat$conference, ref="united")
+       dat$critique <- relevel(dat$critique, ref="Rank-and-file members")
+       dat$parliament <- relevel(dat$parliament, ref="United voting")
+       dat$conference <- relevel(dat$conference, ref="United")
        # reform clarity
-       dat$reform <- relevel(dat$reform, ref="high")
+       dat$reform <- relevel(dat$reform, ref="High")
        # party position
        dat$dist <- relevel(dat$dist, ref="0")
 
@@ -119,22 +119,22 @@ model_cjoint <- cjoint::amce(chosen~
 
 # define scenario (here all possible scenarios)
 compute_scenarios <- function(model) {
-    scenarios=expand.grid(role=c("opposition party", "PM party", "government party (not PM party)"),
-                          conference= c("united", "neither united nor divided", "divided"),
-                          parliament=c("united", "divided"),
-                          critique= c("rank-and-file members", "former party leader", "party faction", "none"),
-                          reform=c("high", "low"),
-                          gender=c("male", "female"),
-                          age=c("38y", "56y", "74y"),
-                          job=c("activist", "employee", "lawyer", "politician",
-                                "entrepreneur", "employee (retired)"),
+    scenarios=expand.grid(role=c("Opposition party", "PM party", "Junior coalition partner"),
+                          conference= c("United", "Neither united nor divided", "Divided"),
+                          parliament=c("United voting", "Divided voting"),
+                          critique= c("Rank-and-file members", "Former party leader", "Party faction", "None"),
+                          reform=c("High", "Low"),
+                          gender=c("Male", "Female"),
+                          age=c("38 years", "56 years", "74 years"),
+                          job=c("Activist", "Employee", "Lawyer", "Politician",
+                                "Entrepreneur", "Employee (retired)"),
                           dist=c("0", "1", "2", "3", "4"),
                           id_screen=1)
     scenarios <- as.data.table(scenarios)
     
     # drop scenarios that are not in experiment (young retiree, or old employee)
-    scenarios$out <- ifelse(scenarios$job=="employee"&scenarios$age=="74y", 1, 0)
-    scenarios$out <- ifelse(scenarios$job=="employee (retired)"&scenarios$age%in%c("38y","56y"), 1, scenarios$out)
+    scenarios$out <- ifelse(scenarios$job=="Employee"&scenarios$age=="74 years", 1, 0)
+    scenarios$out <- ifelse(scenarios$job=="Employee (retired)"&scenarios$age%in%c("38 years","56 years"), 1, scenarios$out)
     scenarios <- scenarios[out==0] # keep if out==0
     scenarios$out <- NULL # drop variable out
     
@@ -171,24 +171,24 @@ scenarios <- compute_scenarios(model = model)
 # define scenario (here all possible scenarios)
 # output are linear predictors, not probabilities
 compute_scenarios_linpred <- function(model){
-    scenarios=expand.grid(role=c("opposition party", "PM party", "government party (not PM party)"),
-                          conference= c("united", "neither united nor divided", "divided"),
-                          parliament=c("united", "divided"),
-                          critique= c("rank-and-file members", "former party leader", "party faction", "none"),
-                          reform=c("high", "low"),
-                          gender=c("male", "female"),
-                          age=c("38y", "56y", "74y"),
-                          job=c("activist", "employee", "lawyer", "politician",
-                                "entrepreneur", "employee (retired)"),
-                          dist=c("0", "1", "2", "3", "4"),
-                          id_screen=1)
-    scenarios <- as.data.table(scenarios)
-    
-    # drop scenarios that are not in experiment (young retiree, or old employee)
-    scenarios$out <- ifelse(scenarios$job=="employee"&scenarios$age=="74y", 1, 0)
-    scenarios$out <- ifelse(scenarios$job=="employee (retired)"&scenarios$age%in%c("38y","56y"), 1, scenarios$out)
-    scenarios <- scenarios[out==0] # keep if out==0
-    scenarios$out <- NULL # drop variable out
+  scenarios=expand.grid(role=c("Opposition party", "PM party", "Junior coalition partner"),
+                        conference= c("United", "Neither united nor divided", "Divided"),
+                        parliament=c("United voting", "Divided voting"),
+                        critique= c("Rank-and-file members", "Former party leader", "Party faction", "None"),
+                        reform=c("High", "Low"),
+                        gender=c("Male", "Female"),
+                        age=c("38 years", "56 years", "74 years"),
+                        job=c("Activist", "Employee", "Lawyer", "Politician",
+                              "Entrepreneur", "Employee (retired)"),
+                        dist=c("0", "1", "2", "3", "4"),
+                        id_screen=1)
+  scenarios <- as.data.table(scenarios)
+  
+  # drop scenarios that are not in experiment (young retiree, or old employee)
+  scenarios$out <- ifelse(scenarios$job=="Employee"&scenarios$age=="74 years", 1, 0)
+  scenarios$out <- ifelse(scenarios$job=="Employee (retired)"&scenarios$age%in%c("38 years","56 years"), 1, scenarios$out)
+  scenarios <- scenarios[out==0] # keep if out==0
+  scenarios$out <- NULL # drop variable out
     
     # create design matrix that has indicator vars instead of factors
     scenarios.expanded <- model.matrix(model, data=scenarios)
