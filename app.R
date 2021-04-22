@@ -3,6 +3,7 @@ library(shinyjs)
 library(shinythemes)
 library(data.table)
 library(ggplot2)
+library(rmarkdown)
 
 # clear directory
 rm(list=ls())
