@@ -20,7 +20,7 @@ dat %>%
   count(incorrect_order) %>% 
   mutate(freq = n/sum(n))
 
-# -> within the whole sample, 6% of ratings show a correct ordering (chosen worse than not chosen, 
+# -> within the whole sample, 6% of ratings show an incorrect ordering (chosen worse than not chosen, 
 # conditional on having rated and having chosen, NA's here represent cases where only one party was rated)
 
 dat %>% 
