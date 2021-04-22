@@ -24,3 +24,6 @@
 
 # R Environment Variables
 .Renviron
+
+# folder created for shiny.io deployment
+rsconnect/
