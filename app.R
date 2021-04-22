@@ -23,7 +23,7 @@ ui <- navbarPage("Party Unity",
                           sidebarLayout(
                             sidebarPanel(width = 5,
                                          fluidRow(
-                                           HTML("Please choose attributes of a ficitional electoral race between two parties. <br>"),
+                                           h4("Please choose attributes of a ficitional electoral race between two parties."),
                                            column(width = 6, h3("Party 1"),
                                                   div(
                                                     id = "scenario_1",
@@ -57,9 +57,11 @@ ui <- navbarPage("Party Unity",
                                          )
                             ),
                             mainPanel(width = 5,
-                                      h3("Expected probabilities"),
-                                      plotOutput("plot"),
-                                      textOutput("result"))
+                                      h2("Predicted individual vote probabilities"),
+                                      HTML("<br><br><br>"),
+                                      h4(textOutput("result")),
+                                      HTML("<br><br>"),
+                                      plotOutput("plot"))
                           )
                  ),
                  # tabPanel("AMCE"),
@@ -142,7 +144,8 @@ server <- function(input, output) {
     
     predprob <- as.data.frame(apply(rv_cases(),2,compute_probs_one_vs_second))
     colnames(predprob) <- c("prob","CI1","CI2")
-    paste0("The plot above shows the expected result from the simulated competition. In the specified case, party 1 gets elected with a probability of ", 
+    paste0("The plot below shows the predicted result from the simulated competition. 
+           In the specified case, the predicted probability that an individual votes for party 1 is ", 
           round(predprob$prob[1] * 100, 1), "% [", 
           round(predprob$CI1[1] * 100, 1), "; ",
           round(predprob$CI2[1] * 100, 1), "].")
