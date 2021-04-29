@@ -111,7 +111,6 @@ ptype <- 20 # point type
 ltype <- 1 # line type
 pcex <- 1 # point size
 lcex <- 1 # line size
-#png(file=paste0(getwd(),"/figures/amceplot2.png"),width=400, height=450)
 pdf(file=paste0(getwd(),"/figures/amceplot2.pdf"),width=6, height=7)
 par(oma=c(0,0,0,0),mar=c(3,0,0,7.5))
 plot(0,xlim=c(-.5,0),ylim=c(1,nrow(plotdata))
@@ -165,7 +164,8 @@ cjoint::plot.amce(model_cjoint, group.order = c("gender",
                                                 "conference",
                                                 "reform",
                                                 "dist"))
-# -> similar but not identical
+# -> similar (but not identical)
+
 
 # scenarios from analysis.R can be used to get probabilities for scenarios compared to baseline
 
@@ -201,7 +201,6 @@ dev.off()
 
 
 # ALTERNATIVE PLOT
-#png(file=paste0(getwd(),"/figures/distplot_conference2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_conference2.pdf"),width=7, height=3)
 par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
@@ -243,8 +242,6 @@ for(i in as.numeric(unique(dist_by_conference$dist))){
              ,dist_by_conference$upper[dist_by_conference$conference=="divided"
                                        & as.numeric(dist_by_conference$dist)==i]))
 }
-# main
-#mtext("Behavior at Party Congress",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
@@ -284,7 +281,6 @@ dev.off()
 
 
 # ALTERNATIVE PLOT
-#png(file=paste0(getwd(),"/figures/distplot_parliament2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
 par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
@@ -316,8 +312,6 @@ for(i in as.numeric(unique(dist_by_parliament$dist))){
              ,dist_by_parliament$upper[dist_by_parliament$parliament=="divided"
                                        & as.numeric(dist_by_parliament$dist)==i]))
 }
-# main
-#mtext("Voting Behavior in Parliament",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
@@ -363,7 +357,10 @@ dev.off()
 dist_by_critique <- scenarios[role == "government party (not PM party)" &
                               conference == "united" &
                               parliament == "united" &
-                              critique %in% c("rank-and-file members", "former party leader", "party faction", "none") &
+                              critique %in% c("rank-and-file members"
+                                              ,"former party leader"
+                                              ,"party faction"
+                                              ,"none") &
                               reform == "high" &
                               gender == "female" &
                               age == "38y" &
@@ -389,7 +386,6 @@ dev.off()
 
 
 # ALTERNATIVE PLOT
-#png(file=paste0(getwd(),"/figures/distplot_critique2.png"),width=300, height=200)
 pdf(file=paste0(getwd(),"/figures/distplot_critique2.pdf"),width=7, height=3)
 par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
@@ -446,8 +442,6 @@ for(i in as.numeric(unique(dist_by_critique$dist))){
                                      & as.numeric(dist_by_critique$dist)==i]))
   
 }
-# main
-#mtext("Intra-Party Critique",font=2,line=.5)
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""))
 axis(2,las=1)
@@ -545,7 +539,6 @@ dev.off()
 
 
 # ALTERNATIVE PLOT
-#png(file=paste0(getwd(),"/figures/competitionplot2.png"), width=400, height=100)
 pdf(file=paste0(getwd(),"/figures/competitionplot2.pdf"), width=7, height=2)
 par(mar=c(0,0,0,0),mar=c(0,.5,0,.5))
 plot(0,xlim=c(0,1),ylim=c(-4.5,1.2),type="n",axes=F,ann=F)
