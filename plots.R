@@ -225,33 +225,18 @@ dev.off()
 
 
 # Effect of ideological distance by unity in parliamentary voting
-dist_by_parliament <- scenarios[role == "government party (not PM party)" &
-                                  conference == "united" &
-                                  parliament %in% c("united", "divided") &
-                                  critique == "rank-and-file members" &
-                                  reform == "high" &
-                                  gender == "female" &
-                                  age == "38y" &
-                                  job == "employee" &
+dist_by_parliament <- scenarios[role == "Junior coalition partner" &
+                                  conference == "United" &
+                                  parliament %in% c("United voting", "Divided voting") &
+                                  critique == "Rank-and-file members" &
+                                  reform == "High" &
+                                  gender == "Female" &
+                                  age == "38 years" &
+                                  job == "Employee" &
                                   dist %in% c(0:4),]
 
-# #plot
-# distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
-#   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-#   facet_wrap(vars(parliament)) +
-#   ggtitle("Voting behavior in parliament") +
-#   ylab("Ideological distance") +
-#   xlab("Predicted vote share versus baseline") +
-#   coord_flip() +
-#   theme_bw()
-# 
-# #save plot to pdf
-# pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 7, height = 3)
-# distplot_parliament
-# dev.off()
 
-
-# ALTERNATIVE PLOT
+# PLOT
 pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
 par(oma=c(0,0,1,0),mar=c(3,3,0,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
@@ -263,24 +248,24 @@ abline(v=c(0.5,1.5,2.5,3.5,4.5),col="white",lwd=13)
 # points & lines
 for(i in as.numeric(unique(dist_by_parliament$dist))){
   points(x=i-.1
-         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="united"
+         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="United voting"
                                     & as.numeric(dist_by_parliament$dist)==i]
          ,pch=20
          ,cex=.8)
   lines(x=c(i-.1,i-.1)
-        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="united"
+        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="United voting"
                                       & as.numeric(dist_by_parliament$dist)==i]
-             ,dist_by_parliament$upper[dist_by_parliament$parliament=="united"
+             ,dist_by_parliament$upper[dist_by_parliament$parliament=="United voting"
                                        & as.numeric(dist_by_parliament$dist)==i]))
   points(x=i+.1
-         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="divided"
+         ,y=dist_by_parliament$prob[dist_by_parliament$parliament=="Divided voting"
                                     & as.numeric(dist_by_parliament$dist)==i]
          ,pch=4
          ,cex=.8)
   lines(x=c(i+.1,i+.1)
-        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="divided"
+        ,y=c(dist_by_parliament$lower[dist_by_parliament$parliament=="Divided voting"
                                       & as.numeric(dist_by_parliament$dist)==i]
-             ,dist_by_parliament$upper[dist_by_parliament$parliament=="divided"
+             ,dist_by_parliament$upper[dist_by_parliament$parliament=="Divided voting"
                                        & as.numeric(dist_by_parliament$dist)==i]))
 }
 # axes
