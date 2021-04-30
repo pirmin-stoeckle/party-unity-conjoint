@@ -6,7 +6,7 @@ library(dplyr)
 rm(list=ls())
 
 # loading analysis script
-source("analysis.R")
+source("./analysis.R")
 
 # pdata from analysis.R can be used for plotting AMCEs
 
@@ -55,20 +55,9 @@ pdata_tidy <- pdata %>%
 # check new names versus those from the analysis
 pdata_tidy %>% select(names, nice_names)
 
-amceplot <- ggplot(pdata_tidy, aes(x = mean, y = fct_rev(fct_inorder(nice_names)))) + #to keep the factor levels as defined in pdata
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25)+
-  geom_vline(xintercept = 0, linetype = 3) +
-  xlab("Change: Pr(Vote for the respective candidate)") +
-  ylab("")
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/amceplot.pdf"))
-amceplot
-dev.off()
 
 
-
-### alternative: AMCE base plot
+### AMCE base plot
 # define group names
 unique(pdata_tidy$nice_names)
 gender <- pdata_tidy[pdata_tidy$nice_names %in% c("Female","Male"),]
@@ -155,15 +144,15 @@ dev.off()
 
 
 # alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
-cjoint::plot.amce(model_cjoint, group.order = c("gender",
-                                                "age",
-                                                "job",
-                                                "role",
-                                                "critique",
-                                                "parliament",
-                                                "conference",
-                                                "reform",
-                                                "dist"))
+# cjoint::plot.amce(model_cjoint, group.order = c("gender",
+#                                                 "age",
+#                                                 "job",
+#                                                 "role",
+#                                                 "critique",
+#                                                 "parliament",
+#                                                 "conference",
+#                                                 "reform",
+#                                                 "dist"))
 # -> similar (but not identical)
 
 
@@ -181,22 +170,22 @@ dist_by_conference <- scenarios[role == "government party (not PM party)" &
                          dist %in% c(0:4),
                          .(conference, dist, lower, prob, upper)]
 
-#plot
-distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist, shape = conference)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), 
-                  position = position_dodge(width = 0.25),
-                  size = 0.25) +
-  #facet_wrap(vars(conference)) +
-  ggtitle("Behavior at party conference") +
-  ylab("Ideological distance") +
-  xlab("Predicted vote share versus baseline") +
-  coord_flip() +
-  theme_bw()
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_conference.pdf"), width = 7, height = 3)
-distplot_conference
-dev.off()
+# #plot
+# distplot_conference <- ggplot(dist_by_conference, aes(x = prob, y = dist, shape = conference)) +
+#   geom_pointrange(aes(xmin = lower, xmax = upper), 
+#                   position = position_dodge(width = 0.25),
+#                   size = 0.25) +
+#   #facet_wrap(vars(conference)) +
+#   ggtitle("Behavior at party conference") +
+#   ylab("Ideological distance") +
+#   xlab("Predicted vote share versus baseline") +
+#   coord_flip() +
+#   theme_bw()
+# 
+# #save plot to pdf
+# pdf(file=paste0(getwd(),"/figures/distplot_conference.pdf"), width = 7, height = 3)
+# distplot_conference
+# dev.off()
 
 
 
@@ -264,20 +253,20 @@ dist_by_parliament <- scenarios[role == "government party (not PM party)" &
                                   job == "employee" &
                                   dist %in% c(0:4),]
 
-#plot
-distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-  facet_wrap(vars(parliament)) +
-  ggtitle("Voting behavior in parliament") +
-  ylab("Ideological distance") +
-  xlab("Predicted vote share versus baseline") +
-  coord_flip() +
-  theme_bw()
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 7, height = 3)
-distplot_parliament
-dev.off()
+# #plot
+# distplot_parliament <- ggplot(dist_by_parliament, aes(x = prob, y = dist)) +
+#   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
+#   facet_wrap(vars(parliament)) +
+#   ggtitle("Voting behavior in parliament") +
+#   ylab("Ideological distance") +
+#   xlab("Predicted vote share versus baseline") +
+#   coord_flip() +
+#   theme_bw()
+# 
+# #save plot to pdf
+# pdf(file=paste0(getwd(),"/figures/distplot_parliament.pdf"), width = 7, height = 3)
+# distplot_parliament
+# dev.off()
 
 
 # ALTERNATIVE PLOT
@@ -338,20 +327,20 @@ dist_by_reform <- scenarios[role == "government party (not PM party)" &
                                   dist %in% c(0:4),]
   
 
-#plot
-distplot_reform <- ggplot(dist_by_reform, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-  facet_wrap(vars(reform)) +
-  ggtitle("Clarity of reform proposals") +
-  ylab("Ideological distance") +
-  xlab("Predicted vote share versus baseline") +
-  coord_flip() +
-  theme_bw()
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_reform.pdf"), width = 7, height = 3)
-distplot_reform
-dev.off()
+# #plot
+# distplot_reform <- ggplot(dist_by_reform, aes(x = prob, y = dist)) +
+#   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
+#   facet_wrap(vars(reform)) +
+#   ggtitle("Clarity of reform proposals") +
+#   ylab("Ideological distance") +
+#   xlab("Predicted vote share versus baseline") +
+#   coord_flip() +
+#   theme_bw()
+# 
+# #save plot to pdf
+# pdf(file=paste0(getwd(),"/figures/distplot_reform.pdf"), width = 7, height = 3)
+# distplot_reform
+# dev.off()
 
 # Effect of ideological distance by internal critique
 dist_by_critique <- scenarios[role == "government party (not PM party)" &
@@ -368,20 +357,20 @@ dist_by_critique <- scenarios[role == "government party (not PM party)" &
                               dist %in% c(0:4),]
 
 
-#plot
-distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
-  geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-  facet_grid(vars(), vars(critique)) +
-  ggtitle("Intra-party critique") +
-  ylab("Ideological distance") +
-  xlab("Predicted vote share versus baseline") +
-  coord_flip() +
-  theme_bw()
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 3)
-distplot_critique
-dev.off()
+# #plot
+# distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
+#   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
+#   facet_grid(vars(), vars(critique)) +
+#   ggtitle("Intra-party critique") +
+#   ylab("Ideological distance") +
+#   xlab("Predicted vote share versus baseline") +
+#   coord_flip() +
+#   theme_bw()
+# 
+# #save plot to pdf
+# pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 3)
+# distplot_critique
+# dev.off()
 
 
 
@@ -520,21 +509,21 @@ abs(predprob$prob[1]-predprob[1,2:3])
 abs(predprob$prob[2]-predprob[2,2:3])
 
 
-# plot
-competitionplot <- ggplot(predprob, aes(x = fct_rev(fct_inorder(c("Party 1 vs Party 2a",
-                                  "Party 1 vs Party 2b"))), y = prob)) +
-  geom_pointrange(aes(ymin = CI1, ymax = CI2), size = 0.25) +
-  ylim(c(0, 1)) +
-  ylab("Expected Probability to Vote for Party 1") +
-  xlab("") +
-  geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
-  coord_flip() +
-  theme_bw()
-
-#save plot to pdf
-pdf(file=paste0(getwd(),"/figures/competitionplot.pdf"), width = 7, height = 3)
-competitionplot
-dev.off()
+# # plot
+# competitionplot <- ggplot(predprob, aes(x = fct_rev(fct_inorder(c("Party 1 vs Party 2a",
+#                                   "Party 1 vs Party 2b"))), y = prob)) +
+#   geom_pointrange(aes(ymin = CI1, ymax = CI2), size = 0.25) +
+#   ylim(c(0, 1)) +
+#   ylab("Expected Probability to Vote for Party 1") +
+#   xlab("") +
+#   geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
+#   coord_flip() +
+#   theme_bw()
+# 
+# #save plot to pdf
+# pdf(file=paste0(getwd(),"/figures/competitionplot.pdf"), width = 7, height = 3)
+# competitionplot
+# dev.off()
 
 
 
