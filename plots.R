@@ -296,21 +296,6 @@ dist_by_critique <- scenarios[role == "Junior coalition partner" &
                               dist %in% c(0:4),]
 
 
-# #plot
-# distplot_critique <- ggplot(dist_by_critique, aes(x = prob, y = dist)) +
-#   geom_pointrange(aes(xmin = lower, xmax = upper), size = 0.25) +
-#   facet_grid(vars(), vars(critique)) +
-#   ggtitle("Intra-party critique") +
-#   ylab("Ideological distance") +
-#   xlab("Predicted vote share versus baseline") +
-#   coord_flip() +
-#   theme_bw()
-# 
-# #save plot to pdf
-# pdf(file=paste0(getwd(),"/figures/distplot_critique.pdf"), width = 7, height = 3)
-# distplot_critique
-# dev.off()
-
 
 
 # PLOT
@@ -393,46 +378,47 @@ compute_probs_one_vs_second <- function(x) {
   return(c(prob.first, 1-prob.first))
 }
 
-cases1_2a <- rbind(linpreds[role == "opposition party" &
-                          conference == "divided" &
-                          parliament == "divided" &
-                          critique == "former party leader" &
-                          reform == "low" &
-                          gender == "female" &
-                          age == "38y" &
-                          job == "employee" &
+
+cases1_2a <- rbind(linpreds[role == "Opposition party" &
+                          conference == "Divided" &
+                          parliament == "Divided voting" &
+                          critique == "Former party leader" &
+                          reform == "Low" &
+                          gender == "Female" &
+                          age == "38 years" &
+                          job == "Employee" &
                           dist == 0
                         ,c("median", "upper", "lower")],
-               linpreds[role == "opposition party" &
-                          conference == "divided" &
-                          parliament == "divided" &
-                          critique == "former party leader" &
-                          reform == "low" &
-                          gender == "female" &
-                          age == "38y" &
-                          job == "employee" &
+               linpreds[role == "Opposition party" &
+                          conference == "Divided" &
+                          parliament == "Divided voting" &
+                          critique == "Former party leader" &
+                          reform == "Low" &
+                          gender == "Female" &
+                          age == "38 years" &
+                          job == "Employee" &
                           dist == 1
                         ,c("median", "upper", "lower")]
 )
 
-cases1_2b <- rbind(linpreds[role == "opposition party" &
-                              conference == "divided" &
-                              parliament == "divided" &
-                              critique == "former party leader" &
-                              reform == "low" &
-                              gender == "female" &
-                              age == "38y" &
-                              job == "employee" &
+cases1_2b <- rbind(linpreds[role == "Opposition party" &
+                              conference == "Divided" &
+                              parliament == "Divided voting" &
+                              critique == "Former party leader" &
+                              reform == "Low" &
+                              gender == "Female" &
+                              age == "38 years" &
+                              job == "Employee" &
                               dist == 0
                             ,c("median", "upper", "lower")],
-                   linpreds[role == "opposition party" &
-                              conference == "united" &
-                              parliament == "united" &
-                              critique == "none" &
-                              reform == "low" &
-                              gender == "female" &
-                              age == "38y" &
-                              job == "employee" &
+                   linpreds[role == "Opposition party" &
+                              conference == "United" &
+                              parliament == "United voting" &
+                              critique == "None" &
+                              reform == "Low" &
+                              gender == "Female" &
+                              age == "38 years" &
+                              job == "Employee" &
                               dist == 1
                             ,c("median", "upper", "lower")]
 )
@@ -449,25 +435,7 @@ abs(predprob$prob[1]-predprob[1,2:3])
 abs(predprob$prob[2]-predprob[2,2:3])
 
 
-# # plot
-# competitionplot <- ggplot(predprob, aes(x = fct_rev(fct_inorder(c("Party 1 vs Party 2a",
-#                                   "Party 1 vs Party 2b"))), y = prob)) +
-#   geom_pointrange(aes(ymin = CI1, ymax = CI2), size = 0.25) +
-#   ylim(c(0, 1)) +
-#   ylab("Expected Probability to Vote for Party 1") +
-#   xlab("") +
-#   geom_hline(yintercept = 0.5, linetype = 3, col = "blue") +
-#   coord_flip() +
-#   theme_bw()
-# 
-# #save plot to pdf
-# pdf(file=paste0(getwd(),"/figures/competitionplot.pdf"), width = 7, height = 3)
-# competitionplot
-# dev.off()
-
-
-
-# ALTERNATIVE PLOT
+# PLOT
 pdf(file=paste0(getwd(),"/figures/competitionplot2.pdf"), width=7, height=2)
 par(mar=c(0,0,0,0),mar=c(0,.5,0,.5))
 plot(0,xlim=c(0,1),ylim=c(-4.5,1.2),type="n",axes=F,ann=F)
