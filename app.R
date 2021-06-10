@@ -26,6 +26,7 @@ ui <- navbarPage("Party Unity",
                                          fluidRow(
                                            h4("Please choose attributes of a ficitional electoral race between two parties."),
                                            column(width = 6, h3("Party 1"),
+                                                  useShinyjs(), # to initialize the package for the reset button
                                                   div(
                                                     id = "scenario_1",
                                                     selectInput('dist_1', 'Ideological Distance', choices = levels(linpreds$dist)),
