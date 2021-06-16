@@ -6,7 +6,7 @@ This repository provides a shiny app that offers an easy-to-use simulation tool 
 The results and the underlying statistical model are based on a conjoint experiment that was fielded in Wave 44 (November 2019) of the [German Internet Panel (GIP)](https://www.uni-mannheim.de/gip/), a probability-based online survey of the German population. For further questions, please feel free to contact one of the authors listed below.
 
 ## Usage
-You can use this shiny app directly from within `R` by running:
+You can use this shiny app directly via this [link](https://party-unity-conjoint.shinyapps.io/simulation/) or from within `R` by running:
 
 ```r
 shiny::runGitHub(repo="party-unity-conjoint"
