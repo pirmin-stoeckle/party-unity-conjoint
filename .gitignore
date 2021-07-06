@@ -27,3 +27,9 @@
 
 # folder created for shiny.io deployment
 rsconnect/
+
+# exclude feedback folder
+/feedback
+
+# exclude presentation folder
+/presentation
