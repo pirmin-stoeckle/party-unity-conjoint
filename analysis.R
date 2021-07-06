@@ -3,7 +3,6 @@ library(ggplot2)
 library(survival)
 library(haven)
 library(MASS)
-library(cjoint) # for # alternative AMCE estimation
 library(forcats) # to re-order factors (within ggplot)
 library(tidyverse)
 
@@ -51,10 +50,6 @@ dat$dist <- factor(dat$dist, levels=0:4)
        # party position
        dat$dist <- relevel(dat$dist, ref="0")
 
-# choice data descriptives
-head(dat)
-summary(dat)
-
 # what is the sample size after removal of missings?
 dat[complete.cases(chosen, dist), #other variables relevant for model are non-missing by design
     .(n_respondents = length(unique(id_g)),
@@ -95,22 +90,6 @@ compute_pdata <- function(model) {
 pdata <- compute_pdata(model = model)
 
 # pdata can be used for plotting
-
-# alternative AMCE estimation following Hainmueller, Hopkins, Yamamoto, T. (2014)
-model_cjoint <- cjoint::amce(chosen~
-                       gender
-                     +age
-                     +job
-                     +role
-                     +critique
-                     +parliament
-                     +conference
-                     +reform
-                     +dist, 
-                     data = dat[complete.cases(dist, chosen),], design = "uniform",
-                     respondent.varying = NULL, subset = NULL,
-                     respondent.id = "id_g", cluster = TRUE, na.ignore=T,
-                     weights = NULL, baselines = NULL)
 
 ####################################################
 # simulate probabilities for a given scenario      #
