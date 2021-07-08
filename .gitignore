@@ -33,3 +33,6 @@ rsconnect/
 
 # exclude presentation folder
 /presentation
+
+# exclude paper folder
+/paper
