@@ -173,7 +173,7 @@ dist_by_conference <- scenarios[role == "Junior coalition partner" &
 
 # PLOT
 pdf(file=paste0(getwd(),"/figures/distplot_conference2.pdf"),width=7, height=3)
-par(oma=c(0,0,1,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3.2,5,.2,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -216,7 +216,7 @@ for(i in as.numeric(unique(dist_by_conference$dist))){
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""),cex.axis=1.1)
 axis(2,las=1,cex.axis=1.1)
-mtext("Predicted Vote Share vs. Baseline",side=2,line=2,cex=1.2)
+mtext("Predicted Vote Share\n vs. Baseline",side=2,line=2.7,cex=1.2)
 mtext("Ideological Distance",side=1,line=2,cex=1.2)
 # legend
 legend("topright",pch=c(20,4,17),legend=c("United","Neither","Divided"),cex=1,bg="white")
@@ -238,7 +238,7 @@ dist_by_parliament <- scenarios[role == "Junior coalition partner" &
 
 # PLOT
 pdf(file=paste0(getwd(),"/figures/distplot_parliament2.pdf"),width=7, height=3)
-par(oma=c(0,0,1,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3.2,5,.2,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -271,7 +271,7 @@ for(i in as.numeric(unique(dist_by_parliament$dist))){
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""),cex.axis=1.1)
 axis(2,las=1,cex.axis=1.1)
-mtext("Predicted Vote Share vs. Baseline",side=2,line=2,cex=1.2)
+mtext("Predicted Vote Share\n vs. Baseline",side=2,line=2.7,cex=1.2)
 mtext("Ideological Distance",side=1,line=2,cex=1.2)
 # legend
 legend("topright",pch=c(20,4),legend=c("United","Divided"),cex=1,bg="white")
@@ -300,7 +300,7 @@ dist_by_critique <- scenarios[role == "Junior coalition partner" &
 
 # PLOT
 pdf(file=paste0(getwd(),"/figures/distplot_critique2.pdf"),width=7, height=3)
-par(oma=c(0,0,1,0),mar=c(3,3,2,0))
+par(oma=c(0,0,0,0),mar=c(3.2,5,.2,0))
 plot(0,xlim=c(.5,5.5),ylim=c(0,50)
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -358,7 +358,7 @@ for(i in as.numeric(unique(dist_by_critique$dist))){
 # axes
 axis(1,at=c(-1,1:6),labels=c("",0:4,""),cex.axis=1.1)
 axis(2,las=1,cex.axis=1.1)
-mtext("Predicted Vote Share vs. Baseline",side=2,line=2,cex=1.2)
+mtext("Predicted Vote Share\n vs. Baseline",side=2,line=2.7,cex=1.2)
 mtext("Ideological Distance",side=1,line=2,cex=1.2)
 # legend
 legend("topright",pch=c(20,4,17,18),legend=c("Rank-and-File","None","Former Leader","Faction")
