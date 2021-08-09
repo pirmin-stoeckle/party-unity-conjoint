@@ -1,5 +1,7 @@
 library(data.table)
 library(tidyverse)
+library(survival)
+library(cjoint)
 
 ######################################################################
 # data check: do party ratings correspond to chosen parties?
@@ -121,9 +123,6 @@ pdata_clogit_correct_ratings <- compute_amce_clogit_correct_ratings(model = mode
 dat.cbc <- dat[complete.cases(chosen, dist), ]
 
 # conditional logit (our approach)
-library(survival)
-library(data.table)
-
 model_clogit <- clogit(chosen~
                          gender
                        +age
@@ -159,7 +158,6 @@ compute_amce_clogit <- function(model) {
 pdata_clogit <- compute_amce_clogit(model = model_clogit)
 
 # approach by Hainmueller et al 2014, implemented in the "cjoint" package
-library(cjoint)
 model_cjoint <- amce(chosen~
                        gender
                      +age
@@ -236,18 +234,18 @@ pdata_robustness1 <- rbind(pdata_clogit, pdata_cjoint)
 pdata_robustness2 <- rbind(pdata_clogit, pdata_clogit_correct_ratings)
 
 #plot 1
-amceplot_robustness1 <- ggplot(pdata_robustness1, aes(x = amce, y = names, shape = specification)) + 
-  geom_pointrange(aes(xmin = lower, xmax = upper), 
-                  size = 0.25,
-                  position = position_dodge(width = 0.5))+
-  geom_vline(xintercept = 0, linetype = 3) +
-  xlab("Change: Pr(Vote for the respective candidate)") +
-  ylab("")
+#amceplot_robustness1 <- ggplot(pdata_robustness1, aes(x = amce, y = names, shape = specification)) + 
+#  geom_pointrange(aes(xmin = lower, xmax = upper), 
+#                  size = 0.25,
+#                  position = position_dodge(width = 0.5))+
+#  geom_vline(xintercept = 0, linetype = 3) +
+#  xlab("Change: Pr(Vote for the respective candidate)") +
+#  ylab("")
 
 #save plot to pdf
-pdf(file=paste0(getwd(),"/figures/amceplot_robustness1.pdf"))
-amceplot_robustness1
-dev.off()
+#pdf(file=paste0(getwd(),"/figures/amceplot_robustness1.pdf"))
+#amceplot_robustness1
+#dev.off()
 
 
 
@@ -256,6 +254,7 @@ dev.off()
 # PLOT
 # Robustness 1
 ##############
+
 # insert nice names for graph and extra rows for baseline categories and labels
 pdata_tidy <- pdata %>%
   mutate(nice_names = c("Male",
@@ -373,8 +372,8 @@ all(plotdata_clogit$names==plotdata_cjoint$names,na.rm=T)
 # PLOT
 pcex <- .5 # point size
 lcex <- .5 # line size
-pdf(file=paste0(getwd(),"/figures/amceplot_robustness1.pdf"),width=6, height=7)
-par(oma=c(0,0,0,0),mar=c(3,0,0,7.5))
+pdf(file=paste0(getwd(),"/figures/amceplot_robustness1.pdf"),width=6.5, height=7)
+par(oma=c(0,0,0,0),mar=c(3,0,0,9.5))
 plot(0,xlim=c(-.51,0),ylim=c(1,nrow(plotdata_cjoint))
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -398,29 +397,29 @@ for(i in 1:nrow(plotdata_cjoint)){
         ,y=c(nrow(plotdata_cjoint)+.9-i,nrow(plotdata_cjoint)+.9-i),lty=1,cex=lcex)
 }
 # category text
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[1],"Ideological Distance",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[2],"Intra-Party Critique",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[3],"Parliamentary Voting Behavior",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[4],"Behavior at Congress",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[5],"Reform Clarity",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[6],"Party Role",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[7],"Gender of Candidate",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[8],"Age of Candidate",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[9],"Candidate's Occupation",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[1],"Ideological Distance",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[2],"Intra-Party Critique",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[3],"Parliamentary Voting Behavior",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[4],"Behavior at Congress",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[5],"Reform Clarity",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[6],"Party Role",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[7],"Gender of Candidate",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[8],"Age of Candidate",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[9],"Candidate's Occupation",font=2,cex=.7)
 # line
 abline(v=0,lty=2)
 # axes
-axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.8)
-axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.8)
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.9)
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.9)
 axis(4,at=c(50,seq(from=nrow(plotdata_cjoint),to=1)[-napos],-5)
      ,labels=NA,cex.axis=.7)
 axis(4,at=c(50,seq(from=nrow(plotdata_cjoint),to=1)[-napos])
      ,labels=c("NA",plotdata_cjoint$nice_names[-napos])
-     ,las=1,lwd=0,line=-.3,cex.axis=.7)
+     ,las=1,lwd=0,line=-.3,cex.axis=.9)
 # label
 mtext(side=1,"Average Marginal Component Effect",outer=F,line=1.7)
 # legend
-legend("bottomleft",legend=c("clogit","cjoint"),pch=c(20,4),lty=1,cex=.9,bg="white")
+legend("bottomleft",legend=c("clogit","cjoint"),pch=c(20,4),lty=1,cex=1,bg="white")
 dev.off()
 
 
@@ -481,8 +480,8 @@ all(plotdata_clogit$names==plotdata_clogit_c$names,na.rm=T)
 # PLOT
 pcex <- .5 # point size
 lcex <- .5 # line size
-pdf(file=paste0(getwd(),"/figures/amceplot_robustness2.pdf"),width=6, height=7)
-par(oma=c(0,0,0,0),mar=c(3,0,0,7.5))
+pdf(file=paste0(getwd(),"/figures/amceplot_robustness2.pdf"),width=6.5, height=7)
+par(oma=c(0,0,0,0),mar=c(3,0,0,9.5))
 plot(0,xlim=c(-.51,0),ylim=c(1,nrow(plotdata_clogit_c))
      ,type="n",axes=F,ann=F)
 # gray polygon
@@ -506,29 +505,29 @@ for(i in 1:nrow(plotdata_clogit_c)){
         ,y=c(nrow(plotdata_clogit_c)+.9-i,nrow(plotdata_clogit_c)+.9-i),lty=1,cex=lcex)
 }
 # category text
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[1],"Ideological Distance",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[2],"Intra-Party Critique",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[3],"Parliamentary Voting Behavior",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[4],"Behavior at Congress",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[5],"Reform Clarity",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[6],"Party Role",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[7],"Gender of Candidate",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[8],"Age of Candidate",font=2,cex=.6)
-text(x=-.25,y=nrow(plotdata_clogit)+1-napos[9],"Candidate's Occupation",font=2,cex=.6)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[1],"Ideological Distance",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[2],"Intra-Party Critique",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[3],"Parliamentary Voting Behavior",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[4],"Behavior at Congress",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[5],"Reform Clarity",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[6],"Party Role",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[7],"Gender of Candidate",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[8],"Age of Candidate",font=2,cex=.7)
+text(x=-.25,y=nrow(plotdata_clogit)+1-napos[9],"Candidate's Occupation",font=2,cex=.7)
 # line
 abline(v=0,lty=2)
 # axes
-axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.8)
-axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.8)
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),labels=NA,cex.axis=.9)
+axis(1,at=c(-1,-.5,-.4,-.3,-.2,-.1,0),line=-.5,lwd=0,cex.axis=.9)
 axis(4,at=c(50,seq(from=nrow(plotdata_clogit_c),to=1)[-napos],-5)
      ,labels=NA,cex.axis=.7)
 axis(4,at=c(50,seq(from=nrow(plotdata_clogit_c),to=1)[-napos])
      ,labels=c("NA",plotdata_clogit_c$nice_names[-napos])
-     ,las=1,lwd=0,line=-.3,cex.axis=.7)
+     ,las=1,lwd=0,line=-.3,cex.axis=.9)
 # label
 mtext(side=1,"Average Marginal Component Effect",outer=F,line=1.7)
 # legend
-legend("bottomleft",legend=c("full sample","consistent ratings"),pch=c(20,4),lty=1,cex=.9,bg="white")
+legend("bottomleft",legend=c("full sample","consistent ratings"),pch=c(20,4),lty=1,cex=1,bg="white")
 dev.off()
 
 
