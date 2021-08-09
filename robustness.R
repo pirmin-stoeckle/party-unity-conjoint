@@ -528,7 +528,7 @@ axis(4,at=c(50,seq(from=nrow(plotdata_clogit_c),to=1)[-napos])
 # label
 mtext(side=1,"Average Marginal Component Effect",outer=F,line=1.7)
 # legend
-legend("bottomleft",legend=c("All","Corrected"),pch=c(20,4),lty=1,cex=.9,bg="white")
+legend("bottomleft",legend=c("full sample","consistent ratings"),pch=c(20,4),lty=1,cex=.9,bg="white")
 dev.off()
 
 
